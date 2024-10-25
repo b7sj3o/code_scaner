@@ -1,0 +1,18 @@
+# django
+*__pycache__
+
+# certificates
+*key.pem
+*cert.pem
+
+# Virtual environment
+.venv
+venv
+.env
+env
+
+# vscode
+.vscode
+
+# db
+*.sqlite3
