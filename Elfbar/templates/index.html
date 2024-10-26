@@ -1,68 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block style %}
 
 {% endblock %}
 
 {% block content %}
-<header>Elfbarstore</header>
 
-<nav>
-    <ul>
-        <li><a href="#">Поди</a></li>
-        <li><a href="#">Жижі</a></li>
-        <li><a href="#">Одноразки</a></li>
-        <li><a href="#">Картриджі</a></li>
-        <li><a href="#">Самозаміси</a></li>
-        <li class="file-upload">
-            <label>
-                 <input type="file" accept="image/*" capture="camera" id="cameraInput">
-                 <span>Сканувати</span>
-            </label>
-       </li>
-    </ul>
-</nav>
-
-<div class="scan-section">
-    
-    <h2>Ваше зображення</h2>
-    <img class="image-preview">
-    <div class="found-product">Знайдено товар: </div>
-</div>
-
-<script>
-    let foundProductText = document.querySelector(".found-product")
-    document.getElementById('cameraInput').addEventListener('change', function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const formData = new FormData();
-            formData.append('image', file);
-
-            fetch('/check_for_barcode', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.querySelector('.image-preview').src = "data:image/jpeg;base64," + data.image;
-                console.log(data.products)
-                if (data.products[0]) {
-                    foundProductText.textContent = "Знайдено товар: "
-                    for (let product of data.products) {
-                        const parsedProduct = JSON.parse(product);
-                        console.log(parsedProduct)
-                        foundProductText.textContent += parsedProduct[0].fields.name + ', '
-                    }
-                } else {
-                    foundProductText.textContent = "Товарів не знайдено."
-
-                }
-                
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        }
-    });
-</script>
 {% endblock %}

@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form action="" method="POST" class="w-100" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+    {% csrf_token %} 
+    {% for form_item in form %}
+        <div class="mb-3 w-50">
+            <label class="form-label">{{ form_item.label }}</label>
+            {{ form_item }}
+        </div>
+    {% endfor %}
+
+    <button type="submit" class="btn btn-primary w-50">Створити</button>
+</form>
+{% endblock content %}

@@ -1,54 +1,82 @@
-import cv2
-import base64
-from pyzbar.pyzbar import decode
-import numpy as np
+import json
 
 from django.core import serializers
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import get_object_or_404
+from django.contrib import messages
 
-from .models import Product
+from .forms import ProductForm
+from .models import Product, Producer
 
 
 def home(request):
-    return render(request, "index.html")
+     return render(request, "index.html")
 
 
 @csrf_exempt
 def check_for_barcode(request):
     if request.method == "POST":
-        frame = request.FILES["image"]
-        img = cv2.imdecode(np.frombuffer(frame.read(), np.uint8), cv2.IMREAD_COLOR)
-        detected_barcodes = decode(img)
-
-        if detected_barcodes:
-            for i in range(len(detected_barcodes)):
-                barcode = detected_barcodes[i]
-                if barcode.type == "QRCODE":
-                    detected_barcodes.remove(barcode)
-                
-                (x, y, w, h) = barcode.rect
-                cv2.rectangle(
-                    img, (x - 10, y - 10), (x + w + 10, y + h + 10), (255, 0, 0), 2
-                )
-
-        _, buffer = cv2.imencode(".jpg", img)
-        img_str = base64.b64encode(buffer).decode("utf-8")
-
-        products = []
-        
-        for barcode in detected_barcodes:
-            product = Product.objects.get(barcode=barcode.data.decode("utf-8"))
-            products.append(serializers.serialize("json", [product]))
-                
+        data = json.loads(request.body)
+        barcode = data.get("barcode")
+    
+        try:
+            product = Product.objects.select_related('producer').get(barcode=int(barcode))
+            product_data = {
+                "id": product.id,
+                "name": product.name,
+                "amount": product.amount,
+                "producer": product.producer.name
+            }
+        except:
+            return JsonResponse({"status": "error"})
 
         return JsonResponse(
             {
                 "status": "success",
-                "image": img_str,
-                "products": products,
+                "products": product_data,
             }
         )
 
     return JsonResponse({"status": "error"})
+
+
+@csrf_exempt
+def add_sale(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        
+        product_id = data.get("product_id")
+        amount = int(data.get("amount"))
+        
+        product = Product.objects.get(id=product_id)
+        
+        product.amount -= amount
+        product.sold_amount += amount
+        product.save()
+        
+        messages.success(request, f'Додано {amount}шт. до {product.producer.name} - {product.name}!')
+        return JsonResponse({"status": "success"})
+    
+
+def create_product(request):
+    barcode = request.GET.get("barcode")
+    form = ProductForm(initial={'barcode': barcode})
+    
+    if request.method == "POST":
+        form = ProductForm(request.POST)
+        
+        if form.is_valid():
+            form.save()
+            
+            messages.success(request, 'Продукт успішно створено!')
+            return redirect("home")
+        
+        return redirect("create_product")
+    
+    context = {
+        "form": form
+    }
+    
+    return render(request, "create-product.html", context=context)
