@@ -2,9 +2,60 @@
 {% load static %}
 
 {% block style %}
-
+<link rel="stylesheet" href="{% static 'css/style.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/scanner.min.css' %}">
 {% endblock %}
 
 {% block content %}
 
-{% endblock %}
+<div class="scanner-container">
+    <video id="video" class="scanner" autoplay></video>
+    <canvas id="canvasOverlay"></canvas>
+    <button class="scanner-flashlight" id="flashButton">
+        <img src="{% static 'img/flashlight.png' %}" alt="">
+    </button>
+</div>
+
+<div class="found-product">
+    <div class="found-product__names">
+        <div class="found-product__name">10ml - Вишня ментол</div>
+        <div class="found-product__producer">Chaser</div>
+    </div>
+    <div class="found-product__amount">10</div>
+    <div class="found-product__add" id="addAmountButton">0</div>
+    <div class="found-product__submit" id="addSaleButton">OK</div>
+</div>
+
+<div class="not-found-product">
+    <div class="not-found-product__text">Товар не знайдено</div>
+    <div class="not-found-product__barcode"></div>
+    <div class="not-found-product__buttons" style="display: flex; gap: 20px;">
+        <div class="not-found-product__create" id="AddProductButton">Добавити</div>
+        <div class="not-found-product__create" id="ContinueScanningButton">Продовжити сканування</div>
+    </div>
+</div>
+
+<div class="modal-overlay"></div>
+
+
+<div class="products-option">
+    <div class="products-option__title">Типи продуктів</div>
+    <div class="products-option__blocks">
+        {% for product_type in product_types  %}
+            <a href="" class="products-option__block">{{ product_type }}</a>
+        {% endfor %}
+    </div>
+</div>
+
+{% endblock content %}
+
+{% block script %}
+<script src="https://unpkg.com/@zxing/library@latest"></script>
+<script src="{% static 'js/config.js' %}" type="module"></script>
+<script src="{% static 'js/fetchProduct.js' %}" type="module"></script>
+<script src="{% static 'js/scanner.js' %}" type="module"></script>
+<script src="{% static 'js/modal.js' %}" type="module"></script>
+<script src="{% static 'js/utils.js' %}" type="module"></script>
+<script src="{% static 'js/productsFilter.js' %}" type="module"></script>
+<script src="{% static 'js/app.js' %}" type="module"></script>
+{% endblock script %}
