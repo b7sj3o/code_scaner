@@ -14,10 +14,10 @@ class Scanner {
     }
 
     async openScanner() {
-        if (!isMobile()) {
-            alert("Works only for mobile phones or tablets");
-            return;
-        }
+        // if (!isMobile()) {
+        //     alert("Works only for mobile phones or tablets");
+        //     return;
+        // }
 
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
@@ -47,6 +47,11 @@ class Scanner {
                 this.track.applyConstraints({ advanced: [{ torch: this.isTorchOn }] });
             }
         }
+    }
+
+    closeScanner() {
+        this.scannerContainer.style.display = "none";
+        if (this.isTorchOn) this.toggleFlash();
     }
 
     continueScanning() {

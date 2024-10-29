@@ -1,8 +1,7 @@
 .scanner {
     width: 100vw;
-    // min-height: 100vh;
+
     z-index: 2;
-    
     &-container {
         position: absolute;
         left: 0;
@@ -11,20 +10,27 @@
         display: none;
     }
 
-    &-flashlight {
-        position: absolute;
-        transform: translateX(-50%);
-        left: 50%;
-        bottom: 10%;
-        background-color: rgba(101, 101, 101, 0.42);
-        border-radius: 10px;
-        padding: 10px;
-        z-index: 3;
+    &-button {
+      position: absolute;
+      background-color: rgba(101, 101, 101, 0.42);
+      border-radius: 10px;
+      padding: 10px;
+      z-index: 3;
 
-        img {
-            width: 40px;
-            height: 40px;
-        }
+      img {
+          width: 30px;
+          height: 30px;
+      }
+    }
+
+    &-flashlight {
+      left: 25px;
+      top: calc(25px + 30px + 10px + 10px * 2);
+    }
+
+    &-exit {
+      left: 25px;
+      top: 25px;
     }
 }
 
@@ -41,7 +47,7 @@
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     border-radius: 8px;
-    z-index: 1001;
+    z-index: 6;
   
     &.open {
       display: block; // Show when .open is added
@@ -107,7 +113,7 @@
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     border-radius: 8px;
-    z-index: 1001;
+    z-index: 6;
   
     &.open {
       display: block; // Show when .open is added

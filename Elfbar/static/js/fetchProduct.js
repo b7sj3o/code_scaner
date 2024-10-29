@@ -22,27 +22,52 @@ class ProductHandler {
         });
     }
 
-    async addSale() {
-        $.ajax({
-            url: "/add_sale",
-            type: "POST",
-            dataType: "json",
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            data: JSON.stringify({ 
-                product_id: lastProduct.id,
-                amount: document.querySelector(".found-product__add").textContent
-            }),
-            contentType: "application/json",
-            success: function(data) {
-                scanner.continueScanning();
-            },
+    async addSale(product_id, amount) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "/add_sale",
+                type: "POST",
+                dataType: "json",
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                data: JSON.stringify({ 
+                    product_id: product_id,
+                    amount: amount
+                }),
+                contentType: "application/json",
+                success: (data) => {
+                    scanner.continueScanning();
+                    resolve(data);
+                },
+                error: (err) => {
+                    reject(err);
+                },
+            });
         });
+
     }
 
     async getProductTree() {
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: "/product_tree",
+                type: "GET",
+                dataType: "json",
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                contentType: "application/json",
+                success: (data) => {
+                    resolve(data);
+                },
+                error: (err) => {
+                    reject(err);
+                },
+            });
+        });
+    }
+
+    async getProduct(id) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: `/get_product/${id}`,
                 type: "GET",
                 dataType: "json",
                 csrfmiddlewaretoken: '{{ csrf_token }}',

@@ -32,6 +32,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
 ROOT_URLCONF = "Elfbar.urls"
 
 BASE_DIR_BASE = os.path.join(BASE_DIR, 'templates')
@@ -106,3 +107,11 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': '127.0.0.1:11211',
+    }
+}

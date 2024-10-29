@@ -6,7 +6,8 @@
     border: 0;
     text-decoration: none;
     list-style-type: none;
-    scroll-behavior: smooth
+    scroll-behavior: smooth;
+    touch-action: manipulation;
 }
 
 a {
@@ -33,7 +34,7 @@ h6 {
 }
 
 body {
-    background-color: #b8ab9e;
+    background-color: #c3a281;
     font-family: "Roboto";
     font-weight: 400;
     font-size: 18px;
@@ -41,6 +42,7 @@ body {
     margin: 0;
     padding: 0;
     transition: all .3s;
+    touch-action: manipulation;
 
     .hide {
         overflow: hidden;
@@ -55,9 +57,9 @@ body {
 
 
 .container {
-    max-width: 90%;
+    max-width: 95%;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 0 5px;
     -webkit-box-sizing: content-box;
     box-sizing: content-box
 }
@@ -70,7 +72,7 @@ body {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 5;
 
     &.open {
         display: block;

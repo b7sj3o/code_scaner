@@ -1,4 +1,5 @@
 import { modal } from "./modal.js";
+import { scanner } from "./scanner.js";
 
 export function isMobile() {
     let check = false;
@@ -16,6 +17,5 @@ export function changeProductAmount() {
 }
 
 export function redirectToCreateProduct() {
-    window.location.href = `/create_product?barcode=${lastBarcode}`;
+    window.location.href = `/create_product?barcode=${scanner.lastBarcode}`;
 }
-

@@ -24,7 +24,6 @@ class ProductView(View):
         
         if form.is_valid():
             form.save()
-            
             messages.success(request, 'Продукт успішно створено!')
             return redirect("home")
         

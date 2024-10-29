@@ -25,7 +25,7 @@ class Product(models.Model):
     sell_price = models.PositiveIntegerField(verbose_name="Ціна продажу")
     drop_sell_price = models.PositiveIntegerField(verbose_name="Ціна продажу - дроп")
 
-    amount = models.PositiveIntegerField(verbose_name="Залишок")
+    amount = models.PositiveIntegerField(verbose_name="Залишок", null=True, blank=True)
     sold_amount = models.PositiveIntegerField(default=0, verbose_name="К-сть проданих одиниць")
     drop_sold_amount = models.PositiveIntegerField(default=0, verbose_name="К-сть проданих одиниць - дроп")
     

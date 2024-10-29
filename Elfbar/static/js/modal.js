@@ -6,6 +6,9 @@ class Modal {
         this.foundProductProducer = document.querySelector(".found-product__producer");
         this.foundProductAmount = document.querySelector(".found-product__amount");
         this.foundProductAdded = document.getElementById("addAmountButton");
+
+        this.modalMessages = document.querySelector(".modal-messages")
+        this.modalMessage = document.querySelector(".modal-message")
         
 
         this.notFoundProductBarcode = document.querySelector(".not-found-product__barcode");
@@ -38,6 +41,18 @@ class Modal {
             this.notFoundProductBlock.classList.remove("open");
         }
     }
+
+    showModalMessage(text) {
+        this.modalMessages.classList.add("open")
+        this.modalMessage.textContent = text
+
+        setTimeout(() => {
+            this.modalMessages.classList.remove("open")
+
+        }, 3000)
+    }
 }
 
 export const modal = new Modal();
+
+
