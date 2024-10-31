@@ -6,7 +6,7 @@ from .models import Product
 class ProductForm(ModelForm):
     class Meta:
         model = Product
-        exclude = ("location", "sold_amount", "drop_sold_amount", "is_drop")
+        exclude = ("sold_amount", "drop_sold_amount", "is_drop")
         
         
     def __init__(self, *args, **kwargs):

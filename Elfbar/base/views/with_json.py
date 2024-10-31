@@ -54,7 +54,6 @@ class AddSaleView(View):
 
 @method_decorator(csrf_exempt, name="dispatch")
 class ProductTreeView(View):
-    # TODO: нахуй все переписати нормально
     def get(self, request):
         products = Product.objects.all()
         product_dict = defaultdict(

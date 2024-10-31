@@ -7,9 +7,7 @@ class Modal {
         this.foundProductAmount = document.querySelector(".found-product__amount");
         this.foundProductAdded = document.getElementById("addAmountButton");
 
-        this.modalMessages = document.querySelector(".modal-messages")
-        this.modalMessage = document.querySelector(".modal-message")
-        
+        this.modalMessages = document.querySelector(".modal-messages");
 
         this.notFoundProductBarcode = document.querySelector(".not-found-product__barcode");
         this.notFoundProductBlock = document.querySelector(".not-found-product");
@@ -44,15 +42,20 @@ class Modal {
 
     showModalMessage(text) {
         this.modalMessages.classList.add("open")
-        this.modalMessage.textContent = text
+
+        const modalMessage = document.createElement("div")
+        modalMessage.innerHTML = `
+            <div class='alert alert-success fade show d-flex justify-content-between' role='alert'>
+                <div class='modal-message'>${text}</div>
+            </div>
+        `
+        this.modalMessages.appendChild(modalMessage)
 
         setTimeout(() => {
-            this.modalMessages.classList.remove("open")
+            this.modalMessages.removeChild(modalMessage)
 
         }, 3000)
     }
 }
 
 export const modal = new Modal();
-
-

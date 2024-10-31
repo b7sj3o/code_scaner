@@ -15,7 +15,13 @@ document.getElementById("addSaleButton").addEventListener("click", async () => {
     try {
         const amount = document.querySelector(".found-product__add").textContent;
         const response = await productHandler.addSale(lastProduct.id, amount);
-        modal.showModalMessage(response["message"]);
+        
+        if (response.status == "success") {
+            scanner.continueScanning();
+        }
+        
+        modal.showModalMessage(response.message);
+
     } catch (error) {
         console.error("Error adding sale:", error);
     }

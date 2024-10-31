@@ -1,31 +1,27 @@
-import { modal } from "./modal.js";
-import { setLastProduct, lastProduct, setProductTree, productTree } from "./config.js";
-import { scanner } from "./scanner.js";
-
 class ProductHandler {
-    async findProduct(result) {
-        $.ajax({
-            url: "/check_for_barcode",
-            type: "POST",
-            dataType: "json",
-            csrfmiddlewaretoken: '{{ csrf_token }}',
-            data: JSON.stringify({ barcode: result }),
-            contentType: "application/json",
-            success: function(data) {
-                if (data.status === "success") {
-                    setLastProduct(data.product);
-                    modal.showProductInfo(data.product);
-                } else {
-                    modal.showNotFound(result);
+    async findProduct(barcode) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: "/check-barcode",
+                type: "POST",
+                dataType: "json",
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                data: JSON.stringify({ barcode: barcode }),
+                contentType: "application/json",
+                success: (data) => {
+                    resolve(data)
+                },
+                error: (err) => {
+                    reject(err);
                 }
-            },
+            });
         });
     }
 
     async addSale(product_id, amount) {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: "/add_sale",
+                url: "/add-sale",
                 type: "POST",
                 dataType: "json",
                 csrfmiddlewaretoken: '{{ csrf_token }}',
@@ -35,7 +31,6 @@ class ProductHandler {
                 }),
                 contentType: "application/json",
                 success: (data) => {
-                    scanner.continueScanning();
                     resolve(data);
                 },
                 error: (err) => {
@@ -49,7 +44,7 @@ class ProductHandler {
     async getProductTree() {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: "/product_tree",
+                url: "/product-tree",
                 type: "GET",
                 dataType: "json",
                 csrfmiddlewaretoken: '{{ csrf_token }}',
@@ -67,7 +62,43 @@ class ProductHandler {
     async getProduct(id) {
         return new Promise((resolve, reject) => {
             $.ajax({
-                url: `/get_product/${id}`,
+                url: `/get-product/${id}`,
+                type: "GET",
+                dataType: "json",
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                contentType: "application/json",
+                success: (data) => {
+                    resolve(data);
+                },
+                error: (err) => {
+                    reject(err);
+                },
+            });
+        });
+    }
+
+    async searchProduct(query) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: `/search-products?query=${query}`,
+                type: "GET",
+                dataType: "json",
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+                contentType: "application/json",
+                success: (data) => {
+                    resolve(data);
+                },
+                error: (err) => {
+                    reject(err);
+                },
+            });
+        });
+    }
+    
+    async filterProducers(producer_type) {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: `/filter-producers?product_type=${producer_type}`,
                 type: "GET",
                 dataType: "json",
                 csrfmiddlewaretoken: '{{ csrf_token }}',

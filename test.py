@@ -1,9 +1,20 @@
-from collections import defaultdict
-import json
 
-product_dict = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(list))))
+class Text:
+    def __init__(self, text) -> None:
+        self.text = text
+        
+        
+class Comment(Text):
+    def __init__(self, author):
+        self.author = author
+        super().__init__()
+        
+        
 
-product_dict["a"]["b"]["c"]["d"].append(2)
-product_dict["a"]["b"]["c"]["d"].append(3)
+text = Text("123")
+comment = Comment("Vitaliy")
 
-print(json.dumps(dict(product_dict), indent=2))
+print(comment.author)
+print(comment.text)
+        
+

@@ -48,6 +48,10 @@ class ProductManager {
                 this.pathStack.push(this.chosenPath);
                 this.chosenPath = this.chosenPath[product.textContent];
                 this.showProductTypes();
+
+                if (!this.getBackButton.classList.contains("open")) {
+                    this.getBackButton.classList.add("open");
+                }
             });
         });
     }
@@ -162,9 +166,12 @@ class ProductManager {
         if (this.pathStack.length) {
             this.chosenPath = this.pathStack.pop();
             this.showProductTypes();
+        } 
+
+        if (!this.pathStack.length) {
+            this.getBackButton.classList.remove("open")
         }
     }
 }
 
-// Створюємо інстанс класу для ініціалізації
 export const productManager = new ProductManager();

@@ -1,6 +1,7 @@
 import { productHandler } from "./fetchProduct.js";
 import { isMobile } from "./utils.js";
 import { modal } from "./modal.js";
+import { setLastProduct } from "./config.js";
 
 class Scanner {
     constructor(videoElement, scannerContainer) {
@@ -14,6 +15,7 @@ class Scanner {
     }
 
     async openScanner() {
+        // TODO: enable for production
         // if (!isMobile()) {
         //     alert("Works only for mobile phones or tablets");
         //     return;
@@ -30,8 +32,17 @@ class Scanner {
                 if (result && this.scanning) {
                     this.lastBarcode = result.text;
                     this.scanning = false;
-                    productHandler.findProduct(this.lastBarcode);
+                    const response = await productHandler.findProduct(this.lastBarcode);
+                    
                     this.videoElement.pause();
+
+                    if (response.status === "success") {
+                        setLastProduct(response.product);
+                        modal.showProductInfo(response.product);
+                    } else {
+                        modal.showNotFound(result.text);
+                    }
+
                 }
             });
         } catch (err) {

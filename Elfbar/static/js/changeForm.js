@@ -1,35 +1,76 @@
-const productTypeSelect = document.getElementById("product_type");
-const volumeField = document.getElementById("volume").parentElement;
-const strengthField = document.getElementById("strength").parentElement;
-const podModel = document.getElementById("pod_model").parentElement;
-const puffsAmountField = document.getElementById("puffs_amount").parentElement;
-const resistanceField = document.getElementById("resistance").parentElement;
+import { productHandler } from "./fetchProduct.js";
 
-function toggleFields() {
-    const selectedType = productTypeSelect.options[productTypeSelect.selectedIndex].text;
-    
-    volumeField.style.display = "none";
-    strengthField.style.display = "none";
-    puffsAmountField.style.display = "none";
-    resistanceField.style.display = "none";
-    podModel.style.display = "none";
-    
-    if (selectedType === "Готова жижа" || selectedType === "Самозаміс") {
-        volumeField.style.display = "block";
-        strengthField.style.display = "block";
-    } else if (selectedType === "Одноразка") {
-        puffsAmountField.style.display = "block";
-        strengthField.style.display = "block";
-    } else if (selectedType === "Картридж") {
-        resistanceField.style.display = "block";
-    } else if (selectedType === "Под") {
-        podModel.style.display = "block";
+class ChangeForm {
+    constructor() {
+        this.productTypeSelect = document.getElementById("product_type");
+        this.producerSelect = document.getElementById("producer");
+        this.volumeField = document.getElementById("volume").parentElement;
+        this.strengthField = document.getElementById("strength").parentElement;
+        this.podModel = document.getElementById("pod_model").parentElement;
+        this.puffsAmountField = document.getElementById("puffs_amount").parentElement;
+        this.resistanceField = document.getElementById("resistance").parentElement;
+        this.selectedType = this.productTypeSelect.options[this.productTypeSelect.selectedIndex].text;
+        
+        this.initialize()
+    }
+
+    initialize() {
+        this.productTypeSelect.selectedIndex = 0;
+        
+        this.toggleFields();
+        this.addProductTypeListener();
+
+    }
+
+    toggleFields() {        
+        this.volumeField.style.display = "none";
+        this.strengthField.style.display = "none";
+        this.puffsAmountField.style.display = "none";
+        this.resistanceField.style.display = "none";
+        this.podModel.style.display = "none";
+        
+        if (this.selectedType === "Готова жижа" || this.selectedType === "Самозаміс") {
+            this.volumeField.style.display = "block";
+            this.strengthField.style.display = "block";
+        } else if (this.selectedType === "Одноразка") {
+            this.puffsAmountField.style.display = "block";
+        } else if (this.selectedType === "Картридж") {
+            this.resistanceField.style.display = "block";
+        } else if (this.selectedType === "Под") {
+            this.podModel.style.display = "block";
+        }
+    }
+
+    async updateProducers() {
+        const response = await productHandler.filterProducers(this.selectedType);
+        const producers = response.producers;
+
+        console.log(producers)
+
+        if (!producers.length) {
+            this.producerSelect.innerHTML = "";
+            alert("Для цієї категорії не знайдено виробників")
+            return;
+        }
+
+        this.producerSelect.innerHTML = "";
+        producers.forEach(producer => {
+            const option = document.createElement("option");
+            option.value = producer.id;
+            option.textContent = producer.name;
+            this.producerSelect.appendChild(option);
+        });
+    }
+
+    addProductTypeListener() {
+        this.productTypeSelect.addEventListener("change", () => {
+            this.selectedType = this.productTypeSelect.options[this.productTypeSelect.selectedIndex].text;
+
+            this.toggleFields();
+            this.updateProducers();
+            
+        });
     }
 }
 
-productTypeSelect.addEventListener("change", () => {
-    toggleFields();
-});
-
-
-toggleFields();
+const changeForm = new ChangeForm()

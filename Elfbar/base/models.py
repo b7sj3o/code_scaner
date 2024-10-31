@@ -40,11 +40,22 @@ class OptProduct(models.Model):
     price = models.PositiveIntegerField(verbose_name="Ціна продажу")
     amount = models.PositiveIntegerField(verbose_name="К-сть")
 
-class Producer(models.Model):
+
+
+class Type(models.Model):
     name = models.CharField(max_length=100)
-    
+
     def __str__(self):
         return self.name
+    
+    
+    
+class Producer(models.Model):
+    name = models.CharField(max_length=100)
+    producer_type = models.ForeignKey("Type", on_delete=models.PROTECT, null=True, blank=True)
+    
+    def __str__(self):
+        return f"{self.name} - {self.producer_type}"
     
 
 class PodModel(models.Model):
@@ -80,11 +91,4 @@ class PuffsAmount(models.Model):
     
     def __str__(self):
         return f"{self.amount}"
-    
-
-class Type(models.Model):
-    name = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.name
     

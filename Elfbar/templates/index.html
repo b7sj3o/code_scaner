@@ -8,55 +8,12 @@
 
 {% block content %}
 
-<div class="scanner-container">
-    <video id="video" class="scanner" autoplay></video>
-    <canvas id="canvasOverlay"></canvas>
-    <button class="scanner-button scanner-flashlight" id="scannerFlashButton">
-        <img src="{% static 'img/flashlight.png' %}" alt="">
-    </button>
-    <button class="scanner-button scanner-exit" id="scannerExitButton">
-        <img src="{% static 'img/exit.png' %}" alt="">
-    </button>
-</div>
+{% include 'scanner.html' %}
 
-<div class="found-product">
-    <div class="found-product__names">
-        <div class="found-product__name"></div>
-        <div class="found-product__producer"></div>
-    </div>
-    <div class="found-product__amount"></div>
-    <div class="found-product__add" id="addAmountButton">0</div>
-    <div class="found-product__submit" id="addSaleButton">OK</div>
-</div>
+{% include 'search.html' %}
 
-<div class="not-found-product">
-    <div class="not-found-product__text">Товар не знайдено</div>
-    <div class="not-found-product__barcode"></div>
-    <div class="not-found-product__buttons" style="display: flex; gap: 20px;">
-        <div class="not-found-product__create" id="AddProductButton">Добавити</div>
-        <div class="not-found-product__create" id="ContinueScanningButton">Продовжити сканування</div>
-    </div>
-</div>
+{% include 'product.html' %}
 
-<div class="modal-overlay"></div>
-
-
-<div class="products-option">
-
-    <div class="return-back">
-        <img src="{% static 'img/arrow-left.png' %}" alt="">
-    </div>
-    <div class="products-option__title">Типи продуктів</div>
-    <div class="products-option__blocks">
-    </div>
-</div>
-
-<div class="container position-fixed top-0 mt-4 modal-messages">
-    <div class="alert alert-success fade show d-flex justify-content-between" role="alert">
-        <div class="modal-message"></div>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-</div>
 
 {% endblock content %}
 

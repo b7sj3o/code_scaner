@@ -5,14 +5,21 @@ from .views import (
     CheckForBarcodeView,
     AddSaleView,
     ProductTreeView,
-    GetProductView
+    GetProductView,
+    ProductSearchView,
+    ProductsArrival,
+    
+    filter_producers,
 )
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
-    path("check_for_barcode", CheckForBarcodeView.as_view(), name="check_for_barcode"),
-    path("add_sale", AddSaleView.as_view(), name="add_sale"),
-    path("create_product", ProductView.as_view(), name="create_product"),
-    path("product_tree", ProductTreeView.as_view(), name="product_tree"),
-    path("get_product/<int:pk>", GetProductView.as_view(), name="get_product"),
+    path("check-barcode", CheckForBarcodeView.as_view(), name="check-barcode"),
+    path("add-sale", AddSaleView.as_view(), name="add-sale"),
+    path("create-product", ProductView.as_view(), name="create-product"),
+    path("product-tree", ProductTreeView.as_view(), name="product-tree"),
+    path("get-product/<int:pk>", GetProductView.as_view(), name="get-product"),
+    path("filter-producers", filter_producers, name="filter-producers"),
+    path('search-products/', ProductSearchView.as_view(), name='search-products'),
+    path("products-arrival", ProductsArrival.as_view(), name="products-arrival")
 ]
