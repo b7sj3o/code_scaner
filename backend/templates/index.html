@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/style.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/scanner.min.css' %}">
+{% endblock %}
+
+{% block content %}
+
+{% comment %} {% include 'search.html' %} {% endcomment %}
+
+{% include 'product.html' %}
+
+
+{% endblock content %}
+
+{% block script %}
+<script src="https://unpkg.com/@zxing/library@latest"></script>
+<script src="{% static 'js/productManager.js' %}" type="module"></script>
+{% comment %} <script src="{% static 'js/productsFilter.js' %}" type="module"></script> {% endcomment %}
+{% endblock script %}

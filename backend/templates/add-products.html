@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block style %}
+<link rel="stylesheet" href="{% static 'css/add-products.min.css' %}">
+{% endblock %}
+
+
+{% block content %}
+
+<div class="search-container">
+    {% include "search.html" %}
+
+    <div class="product-form" id="arrivalProductsSearch">
+    
+    </div>
+    
+    <form class="search-arrival-form">
+        <label for="buy-price" class="form-label">Ціна покупки:</label>
+        <input type="text" name="buy-price" id="buy-price" class="search-buy-price form-control" required>
+        <label for="sell-price" class="form-label mt-2">Ціна продажу:</label>
+        <input type="text" name="sell-price" id="sell-price" class="search-sell-price form-control" required>
+        
+        <button type="submit" class="search-button-submit btn btn-primary mt-3 w-100">Добавити</button>
+    </form>
+</div>
+
+
+
+<h1 class="text-center mt-4 fs-2 fw-bold">Товар:</h1>
+
+<div class="product-form" id="arrivalProducts">
+    
+    <button type="button" class="btn btn-success">Добавити</button>
+</div>
+
+
+
+
+{% endblock content %}
+
+
+
+{% block script %}
+<script src="{% static 'js/productsFilter.js' %}" type="module"></script>
+{% endblock script %}
