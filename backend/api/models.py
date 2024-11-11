@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Product(models.Model):
-    product_type = models.ForeignKey("Type", on_delete=models.PROTECT, verbose_name="Тип продукту")
+    product_type = models.ForeignKey("ProductType", on_delete=models.PROTECT, verbose_name="Тип продукту")
     producer = models.ForeignKey("Producer", on_delete=models.PROTECT, verbose_name="Виробник")
     
     # Для жиж
@@ -25,7 +25,7 @@ class Product(models.Model):
     sell_price = models.PositiveIntegerField(verbose_name="Ціна продажу")
     drop_sell_price = models.PositiveIntegerField(verbose_name="Ціна продажу - дроп")
 
-    amount = models.PositiveIntegerField(verbose_name="Залишок", null=True, blank=True)
+    amount = models.PositiveIntegerField(verbose_name="Залишок")
     sold_amount = models.PositiveIntegerField(default=0, verbose_name="К-сть проданих одиниць")
     drop_sold_amount = models.PositiveIntegerField(default=0, verbose_name="К-сть проданих одиниць - дроп")
     
@@ -42,7 +42,7 @@ class OptProduct(models.Model):
 
 
 
-class Type(models.Model):
+class ProductType(models.Model):
     name = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
@@ -52,7 +52,7 @@ class Type(models.Model):
     
 class Producer(models.Model):
     name = models.CharField(max_length=100)
-    producer_type = models.ForeignKey("Type", on_delete=models.PROTECT)
+    producer_type = models.ForeignKey("ProductType", on_delete=models.PROTECT)
     
     def __str__(self):
         return f"{self.name} - {self.producer_type}"

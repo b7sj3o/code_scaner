@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     Product,
-    Type,
+    ProductType,
     Producer,
     PuffsAmount,
     LiquidStrength,
@@ -13,7 +13,7 @@ from .models import (
 
 models_db = [
     Product,
-    Type,
+    ProductType,
     Producer,
     PuffsAmount,
     LiquidStrength,

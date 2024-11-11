@@ -1,0 +1,73 @@
+/* Основний стиль для навігаційної панелі */
+.navbar {
+    background-color: #333; /* Темний фон для панелі */
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Список елементів навігації */
+.navbar ul {
+    list-style-type: none;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* Кожен елемент списку */
+.navbar li {
+    display: inline-block;
+}
+
+/* Стилі для лінків */
+.navbar a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 16px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Стилі для лінків при наведенні */
+.navbar a:hover {
+    background-color: #007bff; /* Синій колір при наведенні */
+    color: #fff;
+}
+
+/* Стилі для активних лінків */
+.navbar a:active {
+    background-color: #0056b3; /* Темніший синій при натисканні */
+}
+
+/* Стилі для кнопки Scan */
+.navbar button {
+    padding: 10px 20px;
+    background-color: #28a745; /* Зелений фон */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+/* Стилі для кнопки Scan при наведенні */
+.navbar button:hover {
+    background-color: #218838; /* Темніший зелений при наведенні */
+}
+
+/* Стилі для кнопки Scan при натисканні */
+.navbar button:active {
+    background-color: #1e7e34; /* Найтемніший зелений */
+    transform: scale(0.98); /* Зменшення кнопки при натисканні */
+}
+
+@media screen and (max-width: 600px) {
+    .navbar ul {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+}

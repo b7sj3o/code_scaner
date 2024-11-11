@@ -22,12 +22,12 @@ class CheckForBarcodeView(APIView):
                 "amount": product.amount,
                 "producer": product.producer.name,
             }
-        except:
+        except Exception as ex:
             return Response(
-                data={"status": "error"}, status=status.HTTP_400_BAD_REQUEST
+                data={"error": f"{ex}"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         return Response(
-            data={"status": "success", "product": product_data},
+            data={"product": product_data},
             status=status.HTTP_200_OK,
         )

@@ -8,10 +8,22 @@ from ..serializers import ProductSerializer
 from django.db.models import Q
 from collections import defaultdict
 
+
 class ProductView(APIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    
+    def get(self, request):
+        products = Product.objects.select_related(
+            "product_type",
+            "producer",
+            "pod_model",
+            "puffs_amount",
+            "resistance",
+            "strength",
+            "volume",
+        ).all()
+        
+        serializer_class = ProductSerializer(products, many=True)
+        return Response(serializer_class.data, status=status.HTTP_200_OK)
+
     def post(self, request):
         data = request.data
         serializer = ProductSerializer(data=data)
@@ -19,8 +31,11 @@ class ProductView(APIView):
             product = serializer.save()
             product.name = product.name.lower()
             product.save()
-            return Response(data={"message": "Продукт успішно створено!"}, status=status.HTTP_200_OK)
-        
+            return Response(
+                data={"message": f"Продукт '{product.name}' успішно створено!"},
+                status=status.HTTP_200_OK,
+            )
+
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -28,40 +43,45 @@ class ProductFilterView(APIView):
     def get(self, request):
         search_query = request.GET.get("query", "")
         results = []
-        
+
         if search_query:
-            search_keywords = [kw.lower() for kw in search_query.split()]
+            search_keywords = search_query.lower().split()
             q_objects = Q()
-            
+
             for keyword in search_keywords:
                 q_objects &= (
-                    Q(name__icontains=keyword) |
-                    Q(producer__name__icontains=keyword) |
-                    Q(product_type__name__icontains=keyword) |
-                    Q(volume__amount__icontains=keyword) |
-                    Q(strength__amount__icontains=keyword) |
-                    Q(puffs_amount__amount__icontains=keyword) |
-                    Q(resistance__amount__icontains=keyword) |
-                    Q(pod_model__name__icontains=keyword)
+                    Q(name__icontains=keyword)
+                    | Q(producer__name__icontains=keyword)
+                    | Q(product_type__name__icontains=keyword)
+                    | Q(volume__amount__icontains=keyword)
+                    | Q(strength__amount__icontains=keyword)
+                    | Q(puffs_amount__amount__icontains=keyword)
+                    | Q(resistance__amount__icontains=keyword)
+                    | Q(pod_model__name__icontains=keyword)
                 )
-                
+
             results = Product.objects.filter(q_objects).values(
-                    "id", "name", "amount", "product_type__name", "producer__name", "barcode", 
-                    "sell_price", "volume__amount", "strength__amount", 
-                    "puffs_amount__amount", "resistance__amount", "pod_model__name"
-                )
-        
-        return Response(data={"results": list(results)}, status=status.HTTP_200_OK)
+                "id",
+                "name",
+                "amount",
+                "product_type__name",
+                "producer__name",
+                "barcode",
+                "sell_price",
+                "volume__amount",
+                "strength__amount",
+                "puffs_amount__amount",
+                "resistance__amount",
+                "pod_model__name",
+            )
+
+        return Response(data=list(results), status=status.HTTP_200_OK)
 
 
 class ProductTreeView(APIView):
     def get(self, request):
         products = Product.objects.all()
-        product_dict = defaultdict(
-            lambda: defaultdict(
-                lambda: defaultdict(list)
-            )
-        )
+        product_dict = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 
         for product in products:
             product_type = product.product_type.name.lower()
@@ -73,7 +93,7 @@ class ProductTreeView(APIView):
                 "amount": product.amount,
                 "sold_amount": product.sold_amount,
                 "buy_price": product.buy_price,
-                "sell_price": product.sell_price
+                "sell_price": product.sell_price,
             }
 
             if product_type in {"готова жижа", "самозаміс"}:
@@ -81,7 +101,9 @@ class ProductTreeView(APIView):
                 strength = product.strength.amount
 
                 product_dict[product_type][producer][volume] = defaultdict(list)
-                product_dict[product_type][producer][volume][strength].append(product_info)
+                product_dict[product_type][producer][volume][strength].append(
+                    product_info
+                )
 
             elif product_type == "одноразка":
                 puffs_amount = product.puffs_amount.amount
