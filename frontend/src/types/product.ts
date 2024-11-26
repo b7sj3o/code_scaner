@@ -1,5 +1,5 @@
 export interface Product {
-    id?: number;
+    id: number;
     product_type_name: string;
     producer_name: string;
     volume_amount?: string;
@@ -15,24 +15,11 @@ export interface Product {
     barcode: string;
 }
 
-export interface AddSaleResponse {
-    message: string;
-}
-
-export interface ProductType {
+export interface BarcodeProduct {
     id: number;
     name: string;
-}
-
-export interface Producer {
-    id: number;
-    name: string;
-    producer_type_name: string;
-}
-
-export interface PodModel {
-    id: number;
-    name: string;
+    amount: number;
+    producer: string;
 }
 
 export interface ProductInfo {
@@ -40,7 +27,6 @@ export interface ProductInfo {
     name: string;
     barcode: string;
     amount: number;
-    sold_amount: number;
     buy_price: number;
     sell_price: number;
 }
@@ -71,4 +57,9 @@ export interface ProductTypeGroup {
 
 export interface ProductTree {
     [productType: string]: ProductTypeGroup;
+}
+
+export interface ProductSearchProps {
+    showAddButton?: boolean;
+    onProductAdd?: (product: Product) => void;
 }

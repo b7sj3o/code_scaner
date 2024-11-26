@@ -1,7 +1,7 @@
 .PHONY: run migrate migrates superuser
 
 run_backend:
-	python backend/manage.py runserver
+	python backend/manage.py runserver 0.0.0.0:8000
 
 run_backend_https:
 	python backend/manage.py runsslserver --certificate backend/cert.pem --key backend/key.pem 0.0.0.0:8000

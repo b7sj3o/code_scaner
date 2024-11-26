@@ -1,94 +1,107 @@
 from django.db import models
+from django.core.validators import MinValueValidator
 
-
-class Product(models.Model):
-    product_type = models.ForeignKey("ProductType", on_delete=models.PROTECT, verbose_name="Тип продукту")
-    producer = models.ForeignKey("Producer", on_delete=models.PROTECT, verbose_name="Виробник")
+class Produc
+    product_type = models.ForeignKey("ProductType", on_delete=models.PROTECT)
+    producer = models.ForeignKey("Producer", on_delete=models.PROTECT)
     
     # Для жиж
-    volume = models.ForeignKey("LiquidVolume", on_delete=models.PROTECT, verbose_name="Об'єм рідини", null=True, blank=True)
-    strength = models.ForeignKey("LiquidStrength", on_delete=models.PROTECT, verbose_name="Міцність рідини", null=True, blank=True)
+    volume = models.ForeignKey("LiquidVolume", on_delete=models.PROTECT, null=True, blank=True)
+    strength = models.ForeignKey("LiquidStrength", on_delete=models.PROTECT, null=True, blank=True)
     
     # Для одноразок
-    puffs_amount = models.ForeignKey("PuffsAmount", on_delete=models.PROTECT, verbose_name="Кількість тяг", null=True, blank=True)
+    puffs_amount = models.ForeignKey("PuffsAmount", on_delete=models.PROTECT, null=True, blank=True)
     
     # Для картриджів
-    resistance = models.ForeignKey("CartridgeResistance", on_delete=models.PROTECT, verbose_name="Опір картриджа", null=True, blank=True)
+    resistance = models.ForeignKey("CartridgeResistance", on_delete=models.PROTECT, null=True, blank=True)
     
     # Для подів
-    pod_model = models.ForeignKey("PodModel", on_delete=models.PROTECT, verbose_name="Модель поду", null=True, blank=True)
+    pod_model = models.ForeignKey("PodModel", on_delete=models.PROTECT, null=True, blank=True)
     
     # Смак | назва моделі
-    name = models.CharField(max_length=100, verbose_name="Назва | Смак | Колір")
+    name = models.CharField(max_length=100)
     
-    buy_price = models.PositiveIntegerField(verbose_name="Ціна закупки")
-    sell_price = models.PositiveIntegerField(verbose_name="Ціна продажу")
-    drop_sell_price = models.PositiveIntegerField(verbose_name="Ціна продажу - дроп")
+    buy_price = models.FloatField(
+        validators=[MinValueValidator(0.0)])
+    sell_price = models.FloatField(
+        validators=[MinValueValidator(0.0)])
+    drop_sell_price = models.PositiveIntegerField()
 
-    amount = models.PositiveIntegerField(verbose_name="Залишок")
-    sold_amount = models.PositiveIntegerField(default=0, verbose_name="К-сть проданих одиниць")
-    drop_sold_amount = models.PositiveIntegerField(default=0, verbose_name="К-сть проданих одиниць - дроп")
+    amount = models.PositiveIntegerField()
     
-    barcode = models.CharField(max_length=13, unique=True, verbose_name="Штрих-код")
+    barcode = models.CharField(max_length=13, unique=True)
+    
+    def update_buy_price(self, new_buy_price, new_amount):
+        old_total_value = self.buy_price * self.amount
+        new_total_value = new_buy_price * new_amount
+        total_amount = self.amount + new_amount
+        
+        self.buy_price = round((old_total_value+new_total_value) / total_amount, 2)
+        self.save()
+        
     
     def __str__(self):
         return f"{self.id} - {self.name} ({self.product_type})"
 
     
-class OptProduct(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Продукт")
-    price = models.PositiveIntegerField(verbose_name="Ціна продажу")
-    amount = models.PositiveIntegerField(verbose_name="К-сть")
-
-
-
+# TODO: idk what to do, i dont want to keep each sale
+# maybe would change it to DailyProductSale, so 1 table row = 1 real day, O(n) :)))
+class ProductSale(models.Model):
+    # If we would delete product, all sales related to that product will be deleted too
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    sell_price = models.PositiveIntegerField()
+    amount = models.PositiveIntegerField()
+    date = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self) -> str:
+        return f"{self.product.name}, {self.product.product_type.value} - {self.sell_price}грн, {self.amount}шт."
+    
 class ProductType(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    value = models.CharField(max_length=100, unique=True)
 
     def __str__(self):
-        return self.name
+        return self.value
     
     
     
 class Producer(models.Model):
-    name = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
     producer_type = models.ForeignKey("ProductType", on_delete=models.PROTECT)
     
     def __str__(self):
-        return f"{self.name} - {self.producer_type}"
+        return f"{self.value} - {self.producer_type}"
     
 
 class PodModel(models.Model):
-    name = models.CharField(max_length=100, unique=True)
+    value = models.CharField(max_length=100, unique=True)
     
     def __str__(self):
-        return self.name
-
-
-class CartridgeResistance(models.Model):
-    amount = models.FloatField(unique=True)
+        return self.value
++
+cq  SwC VBNM,Alass CartridgeResistance(models.Model):
+    value = models.FloatField(unique=True)
     
     def __str__(self):
-        return f"{self.amount}"
+        return f"{self.value}"
     
     
 class LiquidVolume(models.Model):
-    amount = models.PositiveIntegerField(unique=True)
+    value = models.PositiveIntegerField(unique=True)
     
     def __str__(self):
-        return f"{self.amount}"
+        return f"{self.value}"
     
 
 class LiquidStrength(models.Model):
-    amount = models.PositiveIntegerField(unique=True)
+    value = models.PositiveIntegerField(unique=True)
     
     def __str__(self):
-        return f"{self.amount}"
+        return f"{self.value}"
     
 
 class PuffsAmount(models.Model):
-    amount = models.PositiveIntegerField(unique=True)
+    value = models.PositiveIntegerField(unique=True)
     
     def __str__(self):
-        return f"{self.amount}"
+        return f"{self.value}"
     

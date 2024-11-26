@@ -8,6 +8,7 @@ from .models import (
     LiquidVolume,
     CartridgeResistance,
     PodModel,
+    ProductSale
 )
 
 
@@ -20,6 +21,7 @@ models_db = [
     LiquidVolume,
     CartridgeResistance,
     PodModel,
+    ProductSale,
 ]
 
 for model in models_db:

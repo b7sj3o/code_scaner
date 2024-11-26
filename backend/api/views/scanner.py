@@ -8,7 +8,8 @@ class CheckForBarcodeView(APIView):
     def post(self, request):
         # data = json.loads(request.body)
         # barcode = data.get("barcode")
-        barcode = request.GET.get("barcode", 0)
+        barcode = request.data.get("barcode")
+        print(barcode)
 
         try:
             # select_related() returns a QuerySet that will “follow” foreign-key ("producer" in our example) relationships,
@@ -20,14 +21,14 @@ class CheckForBarcodeView(APIView):
                 "id": product.id,
                 "name": product.name,
                 "amount": product.amount,
-                "producer": product.producer.name,
+                "producer": product.producer.value,
             }
         except Exception as ex:
             return Response(
-                data={"error": f"{ex}"}, status=status.HTTP_400_BAD_REQUEST
+                data={"message": f"{ex}"}, status=status.HTTP_400_BAD_REQUEST
             )
 
         return Response(
-            data={"product": product_data},
+            data=product_data,
             status=status.HTTP_200_OK,
         )

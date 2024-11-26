@@ -1,81 +1,66 @@
+import json
 from rest_framework import status
-
+from rest_framework.generics import ListCreateAPIView, ListAPIView, CreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
-from ..models import Product
-from ..serializers import ProductSerializer
 from django.db.models import Q
 from collections import defaultdict
 
+from ..models import (
+    Producer,
+    Product,
+    ProductType,
+    PodModel,
+    PuffsAmount,
+    CartridgeResistance,
+    LiquidStrength,
+    LiquidVolume,
+)
+from ..serializers import GetProductSerializer, CreateProductSerializer
 
-class ProductView(APIView):
+
+class ListProductsView(ListAPIView):
+    queryset = Product.objects.select_related(
+        "product_type",
+        "producer",
+        "pod_model",
+        "puffs_amount",
+        "resistance",
+        "strength",
+        "volume",
+    ).all()
+    serializer_class = GetProductSerializer
+
+
+class CreateProductView(CreateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = CreateProductSerializer
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        product_name = response.data.get("name", "")
+        return Response(
+            data={"message": f"Продукт '{product_name}' успішно створено!"},
+            status=status.HTTP_201_CREATED,
+        )
+
+class ProductForeignKeysView(APIView):
+
     def get(self, request):
-        products = Product.objects.select_related(
-            "product_type",
-            "producer",
-            "pod_model",
-            "puffs_amount",
-            "resistance",
-            "strength",
-            "volume",
-        ).all()
-        
-        serializer_class = ProductSerializer(products, many=True)
-        return Response(serializer_class.data, status=status.HTTP_200_OK)
+        data = {
+            "product_types": list(ProductType.objects.values("id", "value")),
+            "producers": list(Producer.objects.values("id", "value", "producer_type__value")),
+            "volumes": list(LiquidVolume.objects.values("id", "value")),
+            "strengths": list(LiquidStrength.objects.values("id", "value")),
+            "puffs_amounts": list(PuffsAmount.objects.values("id", "value")),
+            "resistances": list(CartridgeResistance.objects.values("id", "value")),
+            "pod_models": list(PodModel.objects.values("id", "value")),
+        }
 
-    def post(self, request):
-        data = request.data
-        serializer = ProductSerializer(data=data)
-        if serializer.is_valid():
-            product = serializer.save()
-            product.name = product.name.lower()
-            product.save()
-            return Response(
-                data={"message": f"Продукт '{product.name}' успішно створено!"},
-                status=status.HTTP_200_OK,
-            )
-
-        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class ProductFilterView(APIView):
-    def get(self, request):
-        search_query = request.GET.get("query", "")
-        results = []
-
-        if search_query:
-            search_keywords = search_query.lower().split()
-            q_objects = Q()
-
-            for keyword in search_keywords:
-                q_objects &= (
-                    Q(name__icontains=keyword)
-                    | Q(producer__name__icontains=keyword)
-                    | Q(product_type__name__icontains=keyword)
-                    | Q(volume__amount__icontains=keyword)
-                    | Q(strength__amount__icontains=keyword)
-                    | Q(puffs_amount__amount__icontains=keyword)
-                    | Q(resistance__amount__icontains=keyword)
-                    | Q(pod_model__name__icontains=keyword)
-                )
-
-            results = Product.objects.filter(q_objects).values(
-                "id",
-                "name",
-                "amount",
-                "product_type__name",
-                "producer__name",
-                "barcode",
-                "sell_price",
-                "volume__amount",
-                "strength__amount",
-                "puffs_amount__amount",
-                "resistance__amount",
-                "pod_model__name",
-            )
-
-        return Response(data=list(results), status=status.HTTP_200_OK)
+        return Response(data=data, status=status.HTTP_200_OK)
 
 
 class ProductTreeView(APIView):
@@ -84,37 +69,39 @@ class ProductTreeView(APIView):
         product_dict = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 
         for product in products:
-            product_type = product.product_type.name.lower()
-            producer = product.producer.name
+            product_type = product.product_type.value
+            producer = product.producer.value
+
             product_info = {
                 "id": product.id,
                 "name": product.name,
                 "barcode": product.barcode,
                 "amount": product.amount,
-                "sold_amount": product.sold_amount,
                 "buy_price": product.buy_price,
                 "sell_price": product.sell_price,
             }
 
-            if product_type in {"готова жижа", "самозаміс"}:
-                volume = product.volume.amount
-                strength = product.strength.amount
+            if product_type in {"Готова жижа", "Самозаміс"}:
+                volume = product.volume.value
+                strength = product.strength.value
 
-                product_dict[product_type][producer][volume] = defaultdict(list)
+                if not product_dict[product_type][producer][volume]:
+                    product_dict[product_type][producer][volume] = defaultdict(list)
+
                 product_dict[product_type][producer][volume][strength].append(
                     product_info
                 )
 
-            elif product_type == "одноразка":
-                puffs_amount = product.puffs_amount.amount
+            elif product_type == "Одноразка":
+                puffs_amount = product.puffs_amount.value
                 product_dict[product_type][producer][puffs_amount].append(product_info)
 
-            elif product_type == "картридж":
-                resistance = product.resistance.amount
+            elif product_type == "Картридж":
+                resistance = product.resistance.value
                 product_dict[product_type][producer][resistance].append(product_info)
 
-            elif product_type == "под":
-                pod_model = product.pod_model.name
+            elif product_type == "Под":
+                pod_model = product.pod_model.value
                 product_dict[product_type][producer][pod_model].append(product_info)
 
         return Response(data=product_dict, status=status.HTTP_200_OK)

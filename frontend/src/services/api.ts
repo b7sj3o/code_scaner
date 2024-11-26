@@ -1,12 +1,13 @@
 import axios from "axios";
+import { ProductTree, Product, BarcodeProduct } from "../types/product";
 import {
     ProductType,
     PodModel,
     Producer,
-    Product,
-    AddSaleResponse,
-    ProductTree,
-} from "../types/api";
+    ProductForeignKeys,
+    ProductForm
+} from "../types/product-form";
+import { MessageResponse } from "../types/layout";
 
 const api = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
@@ -16,15 +17,20 @@ const api = axios.create({
 });
 
 // check if there is a product by given barcode
-const findProductByBarcode = async (barcode: string): Promise<Product> => {
-    const response = await api.post<Product>("check-barcode/", { barcode });
-    return response.data;
+export const findProductByBarcode = async (barcode: string): Promise<{ success: boolean; data: BarcodeProduct | string }> => {
+    try {
+        const response = await api.post<BarcodeProduct>("check-barcode/", { barcode });
+        return { success: true, data: response.data }; // Повертаємо об'єкт із продуктом
+    } catch (error: any) {
+        const message = error.response?.data?.message || "An error occurred.";
+        return { success: false, data: message }; // Повертаємо об'єкт із повідомленням
+    }
 };
 
 // subtract x items from y product (you sold them)
-const addSale = async (product_id: number, amount: number): Promise<AddSaleResponse> => {
+export const addSale = async (product_id: number, amount: number): Promise<MessageResponse> => {
     try {
-        const response = await api.post<AddSaleResponse>("add-sale/", {
+        const response = await api.post<MessageResponse>("add-sale/", {
             product_id,
             amount,
         });
@@ -32,56 +38,58 @@ const addSale = async (product_id: number, amount: number): Promise<AddSaleRespo
 
     } catch (error: any) {
         if (error.response) {
-            return { message: error.response.data.message };
+            return { "message": error.response.data.message };
         } else {
-            return { message: "An error occurred." };
+            return { "message": "An error occurred." };
         }
     }
 };
 
+// Create product
+export const createProduct = async (product: ProductForm): Promise<MessageResponse> => {
+    const response = await api.post<MessageResponse>("create-product/", product);
+    return response.data;
+};
+
 
 // Get all the products
-const getProducts = async (): Promise<Product[]> => {
+export const getProducts = async (): Promise<Product[]> => {
     const response = await api.get("products/");
     return response.data;
 };
 
+// Get all not required fields that exist in product, so we can do select-option in the most effective way
+export const getProductForeignKeys = async (): Promise<ProductForeignKeys> => {
+    const response = await api.get<ProductForeignKeys>("product-foreign-keys/");
+    return response.data;
+};
+
 // filter products by [name, producer, puffs amount, ...]
-const filterProducts = async (query: string): Promise<Product[]> => {
+export const filterProducts = async (query: string): Promise<Product[]> => {
     const response = await api.get<Product[]>(`filter-products?query=${query}`);
     return response.data;
 };
 
-const getProductTree = async (): Promise<ProductTree> => {
+export const getProductTree = async (): Promise<ProductTree> => {
     const response = await api.get<ProductTree>("product-tree/");
     return response.data;
 };
 
 // Get all product types (Одноразка,Жижа,...)
-const getProductTypes = async (): Promise<ProductType[]> => {
+export const getProductTypes = async (): Promise<ProductType[]> => {
     const response = await api.get<ProductType[]>("product-types/");
     return response.data;
 };
 
 // Get all producers (Vaporesso, Elfbar, Elfliq, ...)
-const getProducers = async (): Promise<Producer[]> => {
+export const getProducers = async (): Promise<Producer[]> => {
     const response = await api.get<Producer[]>("producers/");
     return response.data;
 };
 
 // Get all pod models (Xros3, Xros4, Oxva xlim, ...)
-const getPodModels = async (): Promise<PodModel[]> => {
+export const getPodModels = async (): Promise<PodModel[]> => {
     const response = await api.get<PodModel[]>("pod-models/");
     return response.data;
 };
 
-export {
-    getProductTypes,
-    getProducers,
-    getPodModels,
-    findProductByBarcode,
-    addSale,
-    getProducts,
-    filterProducts,
-    getProductTree,
-};

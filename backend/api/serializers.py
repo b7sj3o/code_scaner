@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import (
     Product,
-    OptProduct,
+    ProductSale,
     ProductType,
     Producer,
     PodModel,
@@ -15,54 +15,54 @@ from .models import (
 class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductType
-        fields = ["id", "name"]
+        fields = ["id", "value"]
 
 
 class ProducerSerializer(serializers.ModelSerializer):
-    producer_type_name = serializers.CharField(source="producer_type.name")
+    producer_type_name = serializers.CharField(source="producer_type.value")
     class Meta:
         model = Producer
-        fields = ["id", "name", "producer_type_name"]
+        fields = ["id", "value", "producer_type_name"]
 
 
 class PodModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = PodModel
-        fields = ["id", "name"]
+        fields = ["id", "value"]
 
 
 class CartridgeResistanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = CartridgeResistance
-        fields = ["id", "amount"]
+        fields = ["id", "value"]
 
 
 class LiquidVolumeSerializer(serializers.ModelSerializer):
     class Meta:
         model = LiquidVolume
-        fields = ["id", "amount"]
+        fields = ["id", "value"]
 
 
 class LiquidStrengthSerializer(serializers.ModelSerializer):
     class Meta:
         model = LiquidStrength
-        fields = ["id", "amount"]
+        fields = ["id", "value"]
 
 
 class PuffsAmountSerializer(serializers.ModelSerializer):
     class Meta:
         model = PuffsAmount
-        fields = ["id", "amount"]
+        fields = ["id", "value"]
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    product_type_name = serializers.CharField(source="product_type.name")
-    producer_name = serializers.CharField(source="producer.name")
-    volume_amount = serializers.CharField(source="volume.amount", allow_null=True)
-    strength_amount = serializers.CharField(source="strength.amount", allow_null=True)
-    puffs_amount_value = serializers.CharField(source="puffs_amount.amount", allow_null=True)
-    resistance_amount = serializers.CharField(source="resistance.amount", allow_null=True)
-    pod_model_name = serializers.CharField(source="pod_model.name", allow_null=True)
+class GetProductSerializer(serializers.ModelSerializer):
+    product_type_name = serializers.CharField(source="product_type.value")
+    producer_name = serializers.CharField(source="producer.value")
+    volume_amount = serializers.CharField(source="volume.value", allow_null=True, required=False, allow_blank=True)
+    strength_amount = serializers.CharField(source="strength.value", allow_null=True, required=False, allow_blank=True)
+    puffs_amount_value = serializers.CharField(source="puffs_amount.value", allow_null=True, required=False, allow_blank=True)
+    resistance_amount = serializers.CharField(source="resistance.value", allow_null=True, required=False, allow_blank=True)
+    pod_model_name = serializers.CharField(source="pod_model.value", allow_null=True, required=False, allow_blank=True)
 
     class Meta:
         model = Product
@@ -80,19 +80,20 @@ class ProductSerializer(serializers.ModelSerializer):
             "sell_price",
             "drop_sell_price",
             "amount",
-            "sold_amount",
-            "drop_sold_amount",
             "barcode",
         ]
 
 
-class OptProductSerializer(serializers.ModelSerializer):
-    product = ProductSerializer()
-
+class CreateProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = OptProduct
-        fields = ["id", "product", "price", "amount"]
+        model = Product
+        fields = "__all__"
+        
+    def create(self, validated_data):
+        return Product.objects.create(**validated_data)
+    
 
-class AddSaleSerializer(serializers.Serializer):
-    product_id = serializers.IntegerField()
-    amount = serializers.IntegerField()
+class SaleSerializer(serializers.Serializer):
+    class Meta:
+        model=ProductSale
+        fields=["product", "sell_price", "amount"]

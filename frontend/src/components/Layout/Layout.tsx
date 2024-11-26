@@ -2,10 +2,9 @@
 import React from 'react';
 import Navbar from '../Navbar/Navbar';
 import "./Layout.scss";
+import { LayoutProps } from '../../types/layout';
 
-interface LayoutProps {
-    children: React.ReactNode;
-}
+
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
     return (

@@ -1,12 +1,23 @@
 import React, { useState, useEffect } from "react";
-import { addSale, getProductTree } from "../../services/api";
-import { CartridgeProduct, DisposableProduct, PodProduct, Product, ProductInfo, ProductTree, ProductTypeGroup, ReadyMixProduct, VolumeGroupedProducts } from "../../types/api";
+import { addSale, getProducers, getProductTree } from "../../services/api";
+import { useModalMessage } from "../../context/ModalMessageContext";
+import {
+    CartridgeProduct,
+    DisposableProduct,
+    PodProduct,
+    ProductInfo,
+    ProductTree,
+    ProductTypeGroup,
+    ReadyMixProduct,
+    VolumeGroupedProducts,
+} from "../../types/product";
 import "./Products.scss";
 
 const Products: React.FC = () => {
     const [productTree, setProductTree] = useState<ProductTree>({});
     const [path, setPath] = useState<string[]>([]);
     const [saleTriggered, setSaleTriggered] = useState(false);
+    const { showModal } = useModalMessage(); 
 
     useEffect(() => {
         const fetchData = async () => {
@@ -38,15 +49,31 @@ const Products: React.FC = () => {
         setPath(path.slice(0, -1));
     };
 
-    const renderObject = (currentLevel: ProductTree | ProductTypeGroup | VolumeGroupedProducts | DisposableProduct | CartridgeProduct | PodProduct | ReadyMixProduct) => {
+    const handleGoHome = () => {
+        setPath([])
+    }
+
+    const renderObject = (
+        currentLevel:
+            | ProductTree
+            | ProductTypeGroup
+            | VolumeGroupedProducts
+            | DisposableProduct
+            | CartridgeProduct
+            | PodProduct
+            | ReadyMixProduct
+    ) => {
         return Object.entries(currentLevel).map(([key, value]) => (
-            <div key={key} className="button-item" onClick={() => handleItemClick(key)}>
+            <div
+                key={key}
+                className="button-item"
+                onClick={() => handleItemClick(key)}
+            >
                 <h3>{key}</h3>
             </div>
         ));
     };
 
-    
     const renderProductList = (currentLevel: ProductInfo[]) => {
         return currentLevel.map((product: ProductInfo) => (
             <div key={product.id} className="product-item">
@@ -55,7 +82,9 @@ const Products: React.FC = () => {
                 <p>Amount: {product.amount}</p>
                 <p>Price: {product.sell_price}</p>
                 <br />
-                <button onClick={() => handleAddSale(product)}>Добавити продажу</button>
+                <button onClick={() => handleAddSale(product)}>
+                    Добавити продажу
+                </button>
             </div>
         ));
     };
@@ -64,13 +93,13 @@ const Products: React.FC = () => {
         try {
             if (product.id) {
                 const response = await addSale(product.id, 1);
-                alert(response.message)
-                setSaleTriggered(!saleTriggered)
+                showModal(response.message);
+                setSaleTriggered(!saleTriggered);
             }
         } catch (error) {
             console.error("Error loading data:", error);
         }
-    }
+    };
 
     const renderCurrentLevel = () => {
         if (Array.isArray(currentLevel)) {
@@ -78,6 +107,10 @@ const Products: React.FC = () => {
         } else {
             return renderObject(currentLevel);
         }
+    };
+
+    const alertSome = async () => {
+        showModal("HELLO!")
     }
 
     const currentLevel = getCurrentLevel();
@@ -86,12 +119,20 @@ const Products: React.FC = () => {
         <div className="products-container">
             <h2 className="title">Products</h2>
             {path.length > 0 && (
-                <button className="back-button" onClick={handleGoBack}>Back</button>
+                <div className="product-btns">
+                    <button className="back-button" onClick={handleGoBack}>
+                    Back
+                    </button>
+                    <button className="back-button" onClick={handleGoHome}>
+                    Home
+                    </button>
+                </div>
             )}
+            <button className="back-button" onClick={alertSome}>
+                    Click
+            </button>
 
-            <div className="buttons-container">
-                {renderCurrentLevel()}
-            </div>
+            <div className="buttons-container">{renderCurrentLevel()}</div>
         </div>
     );
 };

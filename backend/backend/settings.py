@@ -1,4 +1,5 @@
 import os
+import socket
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -37,7 +38,23 @@ MIDDLEWARE = [
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
+    "https://localhost:3000",
+    "https://c783-178-212-97-156.ngrok-free.app"
 ]
+
+# Get network IP
+hostname = socket.gethostname()
+network_ip = next(
+    filter(
+        lambda x: "192.168." in x,
+        socket.gethostbyname_ex(hostname)[2] # [2] is list of IPs
+    )
+)
+
+if network_ip:
+    CORS_ALLOWED_ORIGINS += f"http://{network_ip}:3000",
+    CORS_ALLOWED_ORIGINS += f"https://{network_ip}:3000",
+
 
 ROOT_URLCONF = "backend.urls"
 
