@@ -1,54 +1,91 @@
-import React, {useEffect, useState} from 'react';
-
-
-// import { BarcodeScanner } from 'react-barcode-scanner';
-// import "react-barcode-scanner/polyfill"
-import BarcodeScannerComponent from "react-qr-barcode-scanner";
+import React, { useState } from 'react';
+import BarcodeScannerComponent from 'react-qr-barcode-scanner';
 import { findProductByBarcode } from '../../services/api';
 import { BarcodeProduct } from '../../types/product';
-import { error } from 'console';
+import ModalFound from '../Modal/ModalFound/ModalFound';
+import ModalNotFound from '../Modal/ModalNotFound/ModalNotFound';
+import { useModalMessage } from '../../context/ModalMessageContext';
+import { useNavigate } from 'react-router-dom';
 
 const Scanner: React.FC = () => {
     const [barcode, setBarcode] = useState<string>("");
+    const [product, setProduct] = useState<BarcodeProduct | null>(null);  // Стейт для продукту
+    const [isModalFoundOpen, setIsModalFoundOpen] = useState<boolean>(false);  // Для ModalFound
+    const [isModalNotFoundOpen, setIsModalNotFoundOpen] = useState<boolean>(false);  // Для ModalNotFound
+    const { showModal } = useModalMessage();
+    const navigate = useNavigate();
 
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const fetchedProduct = await findProductByBarcode("312512312");
-            
-    //     }
-    // }, [])
-
-    // TODO: change <any>
     const handleUpdate = async (err: any, result: any) => {
         if (result && typeof result.getText === "function") {
-            setBarcode(result.getText());
+            const scannedBarcode = result.getText();
+            setBarcode(scannedBarcode); // Оновлюємо штрих-код
 
-
-            const fetchedProduct = await findProductByBarcode(result.getText());
+            const fetchedProduct = await findProductByBarcode(scannedBarcode);
 
             if (fetchedProduct.success) {
-                const product = fetchedProduct.data as BarcodeProduct;
-                // TODO: Modal instead of alert
-                alert([product.name, product.amount, product.producer])
+                setProduct(fetchedProduct.data as BarcodeProduct);  // Якщо продукт знайдений, зберігаємо його в стейт
+                setIsModalFoundOpen(true);  // Відкриваємо ModalFound
+                setIsModalNotFoundOpen(false);  // Закриваємо ModalNotFound
             } else {
-                // TODO: Modal instead of alert
-                alert(fetchedProduct.data.toString())
+                setIsModalNotFoundOpen(true);  // Якщо продукт не знайдений, відкриваємо ModalNotFound
+                setIsModalFoundOpen(false);  // Закриваємо ModalFound
             }
         }
     };
 
+    const handleCloseModalFound = () => {
+        setIsModalFoundOpen(false);  // Закриваємо ModalFound
+    };
+
+    const handleCloseModalNotFound = () => {
+        setIsModalNotFoundOpen(false);  // Закриваємо ModalNotFound
+    };
+
+    const handleSimulateFound = () => {
+        const simulatedProduct: BarcodeProduct = {
+            id: 1,
+            name: "Simulated Product",
+            amount: 20,
+            producer: "Simulated Producer",
+            barcode: "123456789",
+        };
+
+        setBarcode(simulatedProduct.barcode);
+        setProduct(simulatedProduct);
+        setIsModalFoundOpen(true);  // Відкриваємо ModalFound
+        setIsModalNotFoundOpen(false);  // Закриваємо ModalNotFound
+    };
+
+    const handleSimulateNotFound = () => {
+        setBarcode("987654321");
+        setProduct(null);
+        setIsModalFoundOpen(false);  // Закриваємо ModalFound
+        setIsModalNotFoundOpen(true);  // Відкриваємо ModalNotFound
+    };
 
     return (
         <>
-          <BarcodeScannerComponent
-            width={"100%"}
-            height={"100%"}
-            onUpdate={handleUpdate}
-          />
+        <button onClick={handleSimulateFound}>Simulate Product Found</button>
+        <button onClick={handleSimulateNotFound}>Simulate Product Not Found</button>
+            <BarcodeScannerComponent
+                width={"100%"}
+                height={"100%"}
+                onUpdate={handleUpdate}
+            />
+            <ModalFound 
+                product={product!}  // Продукт передається в ModalFound, де він використовується
+                isOpen={isModalFoundOpen} 
+                onClose={handleCloseModalFound} 
+                showModal={showModal}
+            />
+            <ModalNotFound 
+                barcode={barcode}  // Штрих-код передається в ModalNotFound
+                isOpen={isModalNotFoundOpen} 
+                onClose={handleCloseModalNotFound}
+                navigate={navigate}
+            />
         </>
-
-        
     );
-}
+};
 
 export default Scanner;

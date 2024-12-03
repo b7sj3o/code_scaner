@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import ProductSearch from "../ProductSearch/ProductSearch";
 import { Product } from "../../types/product";
-import "./ProductArrival.scss";
+import "./ProductOpt.scss";
 import { useModalMessage } from "../../context/ModalMessageContext";
-import { addArrival } from "../../services/api";
+import { addOpt } from "../../services/api";
 
-const ProductArrival: React.FC = () => {
+const ProductOpt: React.FC = () => {
     const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
-    const [amount, setQuantity] = useState<number>(1);
+    // TODO: change to amount to quantity
+    const [amount, setAmount] = useState<number>(1);
     const [price, setPrice] = useState<number>(0);
+    // TODO: change to product id 
     const [arrivalProducts, setArrivalProducts] = useState<Array<{ product: Product; amount: number; price: number }>>([]);
     const { showModal } = useModalMessage();
 
@@ -18,8 +20,8 @@ const ProductArrival: React.FC = () => {
         }
     };
 
-    const handleUpdateQuantity = (q: string) => {
-        setQuantity(parseInt(q))
+    const handleUpdateAmount = (q: string) => {
+        setAmount(parseInt(q))
     }
 
     const handleUpdatePrice = (p: string) => {
@@ -54,7 +56,6 @@ const ProductArrival: React.FC = () => {
 
     };
 
-    // TODO: change to product id 
     const handleSubmitArrival = async () => {
         const productsToSend = arrivalProducts.map(({ product, amount, price }) => ({
             id: product.id,
@@ -63,7 +64,7 @@ const ProductArrival: React.FC = () => {
         }));
 
         try {
-            const response = await addArrival(productsToSend);
+            const response = await addOpt(productsToSend);
 
             if (response.success) {
                 alert("Arrival successfully added!");
@@ -78,7 +79,7 @@ const ProductArrival: React.FC = () => {
 
     return (
         <>
-            <h1 className="product-arrival-title">Додавання приходу товарів</h1>
+            <h1 className="product-arrival-title">Додавання опту товарів</h1>
             <div className="product-arrival">
     
                 {/* Product Search */}
@@ -108,11 +109,11 @@ const ProductArrival: React.FC = () => {
                             min="1"
                             step="1"
                             value={amount}
-                            onChange={(e) => handleUpdateQuantity(e.target.value)}
+                            onChange={(e) => handleUpdateAmount(e.target.value)}
                         />
                     </label>
                     <label>
-                        Закупна ціна:
+                        Продажна ціна:
                         <input
                             type="number"
                             min="0"
@@ -133,7 +134,7 @@ const ProductArrival: React.FC = () => {
     
             {/* Arrival Products Block */}
             <div className="product-arrival__arrival">
-                <h2>Прихід товарів</h2>
+                <h2>Опт товарів</h2>
                 <table className="product-arrival__table">
                     <thead>
                         <tr>
@@ -154,7 +155,7 @@ const ProductArrival: React.FC = () => {
                                         onChange={(e) => {
                                             const updatedArrival = arrivalProducts.map((arrProduct) => 
                                                 arrProduct.product.id === product.id
-                                                    ? { ...arrProduct, amount: +e.target.value }
+                                                    ? { ...arrProduct, quantity: +e.target.value }
                                                     : arrProduct
                                             );
                                             setArrivalProducts(updatedArrival);
@@ -184,7 +185,7 @@ const ProductArrival: React.FC = () => {
                 {/* Submit Button */}
                 {arrivalProducts.length > 0 && (
                     <button className="product-arrival__submit" onClick={handleSubmitArrival}>
-                        Додати прихід
+                        Додати опт
                     </button>
                 )}
             </div>
@@ -193,4 +194,4 @@ const ProductArrival: React.FC = () => {
     
 };
 
-export default ProductArrival;
+export default ProductOpt;

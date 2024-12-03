@@ -1,30 +1,39 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+
 import Layout from './components/Layout/Layout';
+
 import HomePage from './pages/HomePage';
 import CreateProductPage from './pages/CreateProductPage';
 import ScannerPage from './pages/ScannerPage';
 import ProductArrivalPage from './pages/ProductArrival';
-import { ModalProvider } from './context/ModalMessageContext';
-
+import ProductOptPage from './pages/ProductOptPage';
+import SettingsPage from './pages/SettingsPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 
 // App.tsx — Основний компонент програми. Це компонент верхнього рівня, з якого починається структура вашого додатку. 
 // Зазвичай він містить інші компоненти і є "вхідною точкою" програми.
 
 const App: React.FC = () => {
+  const backgroundColor = useSelector((state: any) => state.settings.backgroundColor);
+
   return (
-    <ModalProvider>
-      <Router>
+    <Router>
+        <div style={{backgroundColor: backgroundColor, minHeight: "100vh"}}>
           <Layout>
               <Routes>
                   <Route path="/" element={<HomePage />} />
-                  <Route path="/create-models" element={<CreateProductPage />} />
-                  <Route path="/scan" element={<ScannerPage />}></Route>
-                  <Route path="/add-arrival" element={<ProductArrivalPage />}></Route>
+                  <Route path="/create-product" element={<CreateProductPage />} />
+                  <Route path="/scan" element={<ScannerPage />} />
+                  <Route path="/add-arrival" element={<ProductArrivalPage />} />
+                  <Route path="/add-opt" element={<ProductOptPage />} />
+                  <Route path="/settings" element={<SettingsPage />} />
+                  <Route path="/analytics" element={<AnalyticsPage />} />
               </Routes>
           </Layout>
-      </Router>
-    </ModalProvider>
+        </div>
+    </Router>
   );
 };
 

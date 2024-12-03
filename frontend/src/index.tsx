@@ -2,12 +2,19 @@ import ReactDOM from 'react-dom/client';
 import "./styles/main.scss";
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { Provider } from 'react-redux';
+import { store } from './redux/store';
+import { ModalProvider } from './context/ModalMessageContext';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-    <App />
+  <Provider store={store}>
+    <ModalProvider>
+      <App />
+    </ModalProvider>
+  </Provider>
 );
 
 reportWebVitals();

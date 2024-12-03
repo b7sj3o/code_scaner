@@ -1,11 +1,17 @@
 import React, { useEffect, useState } from "react";
 import "./ProductForm.scss";
-import { createProduct, getProductForeignKeys, getProductTree } from "../../services/api";
-import { ProductTree } from "../../types/product";
-import { ProductForm, ProductForeignKeys, Producer, ForeignKeyItem } from '../../types/product-form';
+import { createProduct, getProductForeignKeys } from "../../services/api";
+import { ProductForm, ProductForeignKeys, Producer } from '../../types/product-form';
 import { useModalMessage } from "../../context/ModalMessageContext";
+import { useLocation } from 'react-router-dom';
 
 const CreateProduct: React.FC = () => {
+    // Get barcode from url if exists
+    const location = useLocation();
+    const searchParams = new URLSearchParams(location.search);
+    const barcodeFromUrl = searchParams.get("barcode");
+
+
     const [formData, setFormData] = useState<ProductForm>({
         product_type: "",
         producer: "",
@@ -14,14 +20,14 @@ const CreateProduct: React.FC = () => {
         sell_price: 0,
         amount: 0,
         drop_sell_price: 0,
-        barcode: ''
+        barcode: barcodeFromUrl || ""
     });
 
     const [productForeignKeys, setProductForeignKeys] = useState<ProductForeignKeys>();
     const [filteredProducers, setFilteredProducers] = useState<Producer[]>([]);
     const [path, setPath] = useState<string[]>([]);
     const [selectedType, setSelectedType] = useState<string>(""); 
-    const { showModal } = useModalMessage()
+    const { showModal } = useModalMessage();
 
     useEffect(() => {
         const fetchData = async () => { 
@@ -93,17 +99,20 @@ const CreateProduct: React.FC = () => {
             showModal(response.message)
 
             // TODO: clear form
-            
-            // setFormData({
-            //     product_type: "",
-            //     producer: "",
-            //     name: '',
-            //     buy_price: 0,
-            //     sell_price: 0,
-            //     amount: 0,
-            //     drop_sell_price: 0,
-            //     barcode: ''
-            // })
+            setFormData({
+                product_type: "",
+                producer: "",
+                name: '',
+                buy_price: 0,
+                sell_price: 0,
+                amount: 0,
+                drop_sell_price: 0,
+                barcode: barcodeFromUrl || ""
+            });
+            setSelectedType("");
+            setPath([]);
+            setFilteredProducers([]); 
+
         } catch (error) {
             console.error("Error creating product: ", error);
         }
@@ -213,7 +222,7 @@ const CreateProduct: React.FC = () => {
                 </div>
                 <div className="form-group">
                     <label>Штрих-код:</label>
-                    <input type="tel" name="barcode" onChange={handleChange} required />
+                    <input type="tel" name="barcode"value={formData.barcode} onChange={handleChange} required />
                 </div>
                 <button type="submit" className="submit-btn">Create Product</button>
             </form>

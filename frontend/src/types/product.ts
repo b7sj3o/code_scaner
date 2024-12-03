@@ -20,7 +20,16 @@ export interface BarcodeProduct {
     name: string;
     amount: number;
     producer: string;
+    barcode: string;
 }
+
+export interface ArrivalProducts {
+    id: number;
+    amount: number;
+    price: number;
+}
+
+export interface OptProducts extends ArrivalProducts {};
 
 export interface ProductInfo {
     id: number;

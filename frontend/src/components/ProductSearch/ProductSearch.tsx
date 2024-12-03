@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from "react";
 import "./ProductSearch.scss";
 import { Product, ProductSearchProps } from "../../types/product";
+import { useDispatch, useSelector } from "react-redux";
+import { setSearchVisibility } from "../../redux/settingsSlice";
+import { RootState } from "../../redux/store";
 import { getProducts } from "../../services/api";
 
 
@@ -10,7 +13,10 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
     const [products, setProducts] = useState<Product[]>([]);
     const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
     const [inputQuery, setInputQuery] = useState<string>("");
-    const [hideSearch, setHideSearch] = useState<boolean>(false);
+    
+    const settings = useSelector((state: any) => state.settings);
+    
+    const [hideSearch, setHideSearch] = useState(settings.hideSearch)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,21 +33,24 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
 
     const handleInputChange = (query: string) => {
         setInputQuery(query)
-        const lowerQuery = query.toLowerCase().trim();
+        const queries = query.toLowerCase().trim().split(/\s+/);
 
         const filtered = products.filter((product) =>
-            // Must-have fields
-            product.name.toLowerCase().includes(lowerQuery) ||
-            product.product_type_name.toLowerCase().includes(lowerQuery) ||
-            product.producer_name.toLowerCase().includes(lowerQuery) ||
-            product.barcode.includes(lowerQuery) ||
+            queries.every((word) =>
+                // Must-have fields
+                product.name.toLowerCase().includes(word) ||
+                product.product_type_name.toLowerCase().includes(word) ||
+                product.producer_name.toLowerCase().includes(word) ||
+                product.barcode.includes(word) ||
 
-            // Non-must-have fields
-            (product.volume_amount || "").toLowerCase().includes(lowerQuery) ||
-            (product.strength_amount || "").toLowerCase().includes(lowerQuery) ||
-            (product.puffs_amount_value || "").toLowerCase().includes(lowerQuery) ||
-            (product.resistance_amount || "").toLowerCase().includes(lowerQuery) ||
-            (product.pod_model_name || "").toLowerCase().includes(lowerQuery)
+                // Non-must-have fields
+                (product.volume_amount || "").toLowerCase().includes(word) ||
+                (product.strength_amount || "").toLowerCase().includes(word) ||
+                (product.puffs_amount_value || "").toLowerCase().includes(word) ||
+                (product.resistance_amount || "").toLowerCase().includes(word) ||
+                (product.pod_model_name || "").toLowerCase().includes(word)
+            )
+            
         );
         setFilteredProducts(filtered);
     };

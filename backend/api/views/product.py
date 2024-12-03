@@ -9,6 +9,7 @@ from collections import defaultdict
 from ..models import (
     Producer,
     Product,
+    ProductSale,
     ProductType,
     PodModel,
     PuffsAmount,
@@ -46,6 +47,7 @@ class CreateProductView(CreateAPIView):
             data={"message": f"Продукт '{product_name}' успішно створено!"},
             status=status.HTTP_201_CREATED,
         )
+
 
 class ProductForeignKeysView(APIView):
 
@@ -105,3 +107,58 @@ class ProductTreeView(APIView):
                 product_dict[product_type][producer][pod_model].append(product_info)
 
         return Response(data=product_dict, status=status.HTTP_200_OK)
+
+
+class AddProductArrivalView(APIView):
+    def post(self, request):
+        products = request.data.get("products")
+
+        try:
+            for product in products:
+                id, price, amount = product["id"], product["price"], product["amount"]
+                existing_product = Product.objects.get(id=id)
+
+                if existing_product.buy_price != price:
+                    existing_product.update_buy_price(
+                        new_buy_price=price,
+                        new_amount=amount
+                    )
+                
+                existing_product.amount += amount
+
+                existing_product.save()
+
+            return Response(data={"success": True, "data": "Success!!"}, status=status.HTTP_200_OK)
+        except Exception as ex:
+            return Response(data={"success": False, "data": f"Error: {ex}"}, status=status.HTTP_400_BAD_REQUEST)
+            
+
+class AddProductOptView(APIView):
+    def post(self, request):
+        products = request.data.get("products")
+
+        try:
+            for product in products:
+                id, price, amount = product["id"], product["price"], product["amount"]
+
+                existing_product = Product.objects.get(id=id)
+
+                if existing_product.amount < amount:
+                    return Response(data={"success": False, "message": f"Not enough stock for product ({existing_product.name}, {existing_product.producer.value})"}, status=status.HTTP_400_BAD_REQUEST)
+
+                existing_product.amount -= amount
+
+                ProductSale.objects.create(
+                    product=existing_product,
+                    sell_price = price,
+                    amount=amount
+                )
+
+                existing_product.save()
+
+            return Response(data={"success": True, "message": "Success!!"}, status=status.HTTP_200_OK)
+        except Product.DoesNotExist:
+            return Response(data={"success": False, "message": "Product not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            return Response(data={"success": False, "message": f"Error: {ex}"}, status=status.HTTP_400_BAD_REQUEST)
+   

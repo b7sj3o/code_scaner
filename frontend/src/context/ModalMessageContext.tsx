@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from "react";
-import ModalMessage from "../components/Modal/ModalMessage";
+import ModalMessage from "../components/Modal/ModalMessage/ModalMessage";
 import { ModalMessageContextType, ModalProviderProps } from "../types/modal";
 
 interface ModalData {

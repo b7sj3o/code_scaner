@@ -102,4 +102,20 @@
         color: #555;
         margin: 2px 0;
     }
+
+    &__add-button {
+        margin-top: 5px;
+        width: 50px;
+        color: #fff;
+        font-size: 20px;
+        border: none;
+        background-color: #4CAF50;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color .3s;
+
+        &:hover {
+            background-color: #4caf4fc2;
+        }
+    }
 }

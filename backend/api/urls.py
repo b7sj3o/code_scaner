@@ -8,7 +8,9 @@ from .views import (
     AddSaleView,
     ProducerView,
     ProductTypeView,
-    PodModelView
+    PodModelView,
+    AddProductArrivalView,
+    AddProductOptView
 )
 
 urlpatterns = [
@@ -22,4 +24,6 @@ urlpatterns = [
     path("product-types/", ProductTypeView.as_view(), name="product-types"),
     path("producers/", ProducerView.as_view(), name="producers"),
     path("pod-models/", PodModelView.as_view(), name="pod-models"),
+    path("add-arrival/", AddProductArrivalView.as_view(), name="add-arrival"),
+    path("add-opt/", AddProductOptView.as_view(), name="add-opt"),
 ]

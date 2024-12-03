@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ProductTree, Product, BarcodeProduct } from "../types/product";
+import { ProductTree, Product, BarcodeProduct, ArrivalProducts, OptProducts } from "../types/product";
 import {
     ProductType,
     PodModel,
@@ -15,6 +15,28 @@ const api = axios.create({
     "Content-Type": "application/json",
     },
 });
+
+// add arrival
+export const addArrival = async (products: ArrivalProducts[]): Promise<{ success: boolean, data: string }> => {
+    try {
+        const response = await api.post("add-arrival/", { products });
+        return { success: true, data: response.data };
+    } catch (error: any) {
+        const message = error.response?.data?.message || "An error occurred.";
+        return { success: false, data: message };
+    }
+};
+
+// add opt
+export const addOpt = async (products: OptProducts[]): Promise<{ success: boolean, data: string }> => {
+    try {
+        const response = await api.post("add-opt/", { products });
+        return { success: true, data: response.data };
+    } catch (error: any) {
+        const message = error.response?.data?.message || "An error occurred.";
+        return { success: false, data: message };
+    }
+};
 
 // check if there is a product by given barcode
 export const findProductByBarcode = async (barcode: string): Promise<{ success: boolean; data: BarcodeProduct | string }> => {

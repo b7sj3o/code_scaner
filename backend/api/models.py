@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 
-class Produc
+class Product(models.Model):
     product_type = models.ForeignKey("ProductType", on_delete=models.PROTECT)
     producer = models.ForeignKey("Producer", on_delete=models.PROTECT)
     
@@ -77,8 +77,8 @@ class PodModel(models.Model):
     
     def __str__(self):
         return self.value
-+
-cq  SwC VBNM,Alass CartridgeResistance(models.Model):
+
+class CartridgeResistance(models.Model):
     value = models.FloatField(unique=True)
     
     def __str__(self):
