@@ -14,6 +14,7 @@ export interface ProductForm {
     barcode: string;
 }
 
+
 export interface ProductForeignKeys {
     product_types: ForeignKeyItem[];
     producers: Producer[];

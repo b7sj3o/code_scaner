@@ -1,7 +1,5 @@
 import React from "react";
 import "./ModalNotFound.scss";
-import { BarcodeProduct } from "../../../types/product";
-import { useNavigate } from "react-router-dom";
 
 interface ModalProps {
     barcode: string;
@@ -14,7 +12,7 @@ const ModalNotFound: React.FC<ModalProps> = ({ barcode, isOpen, navigate, onClos
     if (!isOpen) return null;
 
     const handleCreateProduct = () => {
-        navigate(`/create-product?barcode=${barcode}`);
+        navigate(`/create-product?scannerBarcode=${barcode}`);
     };
 
     return (

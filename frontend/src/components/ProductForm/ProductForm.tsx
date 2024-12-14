@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
 import "./ProductForm.scss";
-import { createProduct, getProductForeignKeys } from "../../services/api";
+import { createProduct, findProductByBarcode, getProductForeignKeys } from "../../services/api";
 import { ProductForm, ProductForeignKeys, Producer } from '../../types/product-form';
 import { useModalMessage } from "../../context/ModalMessageContext";
 import { useLocation } from 'react-router-dom';
 
 const CreateProduct: React.FC = () => {
-    // Get barcode from url if exists
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
-    const barcodeFromUrl = searchParams.get("barcode");
-
+    const barcodeFromScanner = searchParams.get("scannerBarcode");
+    const barcodeFromProducts = searchParams.get("productBarcode");
 
     const [formData, setFormData] = useState<ProductForm>({
         product_type: "",
@@ -20,85 +19,104 @@ const CreateProduct: React.FC = () => {
         sell_price: 0,
         amount: 0,
         drop_sell_price: 0,
-        barcode: barcodeFromUrl || ""
+        barcode: ""
     });
 
     const [productForeignKeys, setProductForeignKeys] = useState<ProductForeignKeys>();
     const [filteredProducers, setFilteredProducers] = useState<Producer[]>([]);
-    const [path, setPath] = useState<string[]>([]);
-    const [selectedType, setSelectedType] = useState<string>(""); 
     const { showModal } = useModalMessage();
 
     useEffect(() => {
-        const fetchData = async () => { 
+        const fetchData = async () => {
             try {
-                const [fetchedProductForeignKeys] = await Promise.all([
-                    getProductForeignKeys(),
-                ]);
-                
+                const fetchedProductForeignKeys = await getProductForeignKeys();
                 setProductForeignKeys(fetchedProductForeignKeys);
+
+                if (barcodeFromScanner) {
+                    setFormData((prevData) => ({
+                        ...prevData,
+                        barcode: barcodeFromScanner
+                    }));
+                } else if (barcodeFromProducts) {
+                    const result = await findProductByBarcode(barcodeFromProducts);
+
+                    if (result.success) {
+                        const product = result.data;
+
+                        console.log(product)
+
+                        setFormData((prevData) => ({
+                            ...prevData,
+                            product_type: product.product_type || "",
+                            producer: product.producer || "",
+                            volume: product.volume || "",
+                            strength: product.strength || "",
+                            puffs_amount: product.puffs_amount || "",
+                            resistance: product.resistance || "",
+                            pod_model: product.pod_model || "",
+                            buy_price: product.buy_price || 0,
+                            sell_price: product.sell_price || 0,
+                            drop_sell_price: product.drop_sell_price || 0,
+                        }));
+
+                    } else {
+                        showModal(`Трапилась помилка: ${result.error}, повідомте Віталіка`);
+                    }
+                }
 
             } catch (error) {
                 console.error('Error loading data:', error);
             }
         };
         fetchData();
+    }, [barcodeFromScanner, barcodeFromProducts, showModal]);
 
-    }, []);
+    useEffect(() => {
+        if (formData.product_type) {
+            filterProducers(formData.product_type)
+        }
+    }, [formData.product_type]);
 
 
     const filterProducers = (type: string) => {
         if (productForeignKeys) {
-            const filteredProducers = productForeignKeys.producers.filter((producer) =>
+            const filtered = productForeignKeys.producers.filter((producer) =>
                 producer.producer_type__value.toLowerCase() === type.toLowerCase()
             );
-            setFilteredProducers(filteredProducers);
+            setFilteredProducers(filtered);
         }
     };
 
+
     const handleTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        // get selected <option> text
-        const text = e.target.options[e.target.selectedIndex].text
+        const selectedType = e.target.value;
 
-        setSelectedType(text);
-
-        setPath([...path, text]);
-
-        setFormData({
-            ...formData,
-            product_type: e.target.value,
-            volume: '',
-            strength: '',
-            puffs_amount: '',
-            resistance: '',
-            pod_model: ''
-        });
-        
-        filterProducers(text);
-
-
+        setFormData((prevData) => ({
+            ...prevData,
+            product_type: selectedType,
+            producer: "",
+            volume: "",
+            strength: "",
+            puffs_amount: "",
+            resistance: "",
+            pod_model: "",
+        }));
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        if (e.target instanceof HTMLSelectElement) {
-            const text = e.target.options[e.target.selectedIndex].text;
-            setPath([...path, text]);
-        }
-
-        setFormData({
-            ...formData,
+        console.log(e.target.value)
+        setFormData((prevData) => ({
+            ...prevData,
             [e.target.name]: e.target.value
-        });
-
+        }));
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             const response = await createProduct(formData);
-            showModal(response.message)
+            showModal(response.message);
 
-            // TODO: clear form
             setFormData({
                 product_type: "",
                 producer: "",
@@ -107,14 +125,12 @@ const CreateProduct: React.FC = () => {
                 sell_price: 0,
                 amount: 0,
                 drop_sell_price: 0,
-                barcode: barcodeFromUrl || ""
+                barcode: ""
             });
-            setSelectedType("");
-            setPath([]);
-            setFilteredProducers([]); 
+            setFilteredProducers([]);
 
         } catch (error) {
-            console.error("Error creating product: ", error);
+            showModal(`creating product: ${error}`);
         }
     };
 
@@ -127,28 +143,29 @@ const CreateProduct: React.FC = () => {
                     <select name="product_type" value={formData.product_type} onChange={handleTypeChange} required>
                         <option value="" disabled>--------</option>
                         {productForeignKeys?.product_types.map(type => (
-                            <option key={type.id} value={type.id}>{type.value}</option>
+                            <option key={type.id} value={type.value}>{type.value}</option>
                         ))}
                     </select>
                 </div>
+
                 <div className="form-group">
                     <label>Виробник:</label>
                     <select name="producer" value={formData.producer} onChange={handleChange} required>
                         <option value="" disabled>--------</option>
                         {filteredProducers.map(producer => (
-                            <option key={producer.id} value={producer.id}>{producer.value}</option>
+                            <option key={producer.id} value={producer.value}>{producer.value}</option>
                         ))}
                     </select>
                 </div>
 
-                {(selectedType === 'Готова жижа' || selectedType === 'Самозаміс') && (
+                {(formData.product_type === 'Готова жижа' || formData.product_type === 'Самозаміс') && (
                     <>
                         <div className="form-group">
                             <label>Об'єм:</label>
                             <select name="volume" value={formData.volume} onChange={handleChange} required>
                                 <option value="" disabled>--------</option>
                                 {productForeignKeys?.volumes.map(volume => (
-                                    <option key={volume.id} value={volume.id}>{volume.value}</option>
+                                    <option key={volume.id} value={volume.value}>{volume.value}</option>
                                 ))}
                             </select>
                         </div>
@@ -157,44 +174,44 @@ const CreateProduct: React.FC = () => {
                             <select name="strength" value={formData.strength} onChange={handleChange} required>
                                 <option value="" disabled>--------</option>
                                 {productForeignKeys?.strengths.map(strength => (
-                                    <option key={strength.id} value={strength.id}>{strength.value}</option>
+                                    <option key={strength.id} value={strength.value}>{strength.value}</option>
                                 ))}
                             </select>
                         </div>
                     </>
                 )}
 
-                {selectedType === 'Одноразка' && (
+                {formData.product_type === 'Одноразка' && (
                     <div className="form-group">
                         <label>Кількість тяг:</label>
                         <select name="puffs_amount" value={formData.puffs_amount} onChange={handleChange} required>
                             <option value="" disabled>--------</option>
                             {productForeignKeys?.puffs_amounts.map(puffs_amount => (
-                                <option key={puffs_amount.id} value={puffs_amount.id}>{puffs_amount.value}</option>
+                                <option key={puffs_amount.id} value={puffs_amount.value}>{puffs_amount.value}</option>
                             ))}
                         </select>
                     </div>
                 )}
 
-                {selectedType === 'Картридж' && (
+                {formData.product_type === 'Картридж' && (
                     <div className="form-group">
                         <label>Опір:</label>
                         <select name="resistance" value={formData.resistance} onChange={handleChange} required>
                             <option value="" disabled>--------</option>
                             {productForeignKeys?.resistances.map(resistance => (
-                                <option key={resistance.id} value={resistance.id}>{resistance.value}</option>
+                                <option key={resistance.id} value={resistance.value}>{resistance.value}</option>
                             ))}
                         </select>
                     </div>
                 )}
 
-                {selectedType === 'Под' && (
+                {formData.product_type === 'Под' && (
                     <div className="form-group">
                         <label>Pod Model:</label>
                         <select name="pod_model" value={formData.pod_model} onChange={handleChange}>
                             <option value="">--------</option>
                             {productForeignKeys?.pod_models.map(model => (
-                                <option key={model.id} value={model.id}>{model.value}</option>
+                                <option key={model.id} value={model.value}>{model.value}</option>
                             ))}
                         </select>
                     </div>
@@ -202,19 +219,19 @@ const CreateProduct: React.FC = () => {
 
                 <div className="form-group">
                     <label>Смак (жижа|одноразка) | Колір (под) | Модель (картридж):</label>
-                    <input type="text" name="name" onChange={handleChange} required />
+                    <input type="text" name="name" value={formData.name} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label>Закупочна ціна:</label>
-                    <input type="tel" name="buy_price" onChange={handleChange} required />
+                    <input type="tel" name="buy_price" value={formData.buy_price} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label>Продажна ціна:</label>
-                    <input type="tel" name="sell_price" onChange={handleChange} required />
+                    <input type="tel" name="sell_price" value={formData.sell_price} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label>Дроп ціна:</label>
-                    <input type="tel" name="drop_sell_price" onChange={handleChange} required />
+                    <input type="tel" name="drop_sell_price" value={formData.drop_sell_price} onChange={handleChange} required />
                 </div>
                 <div className="form-group">
                     <label>К-сть:</label>
@@ -222,7 +239,7 @@ const CreateProduct: React.FC = () => {
                 </div>
                 <div className="form-group">
                     <label>Штрих-код:</label>
-                    <input type="tel" name="barcode"value={formData.barcode} onChange={handleChange} required />
+                    <input type="tel" name="barcode" value={formData.barcode} onChange={handleChange} required />
                 </div>
                 <button type="submit" className="submit-btn">Create Product</button>
             </form>

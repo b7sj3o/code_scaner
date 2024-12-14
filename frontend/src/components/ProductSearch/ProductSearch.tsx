@@ -39,16 +39,16 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
             queries.every((word) =>
                 // Must-have fields
                 product.name.toLowerCase().includes(word) ||
-                product.product_type_name.toLowerCase().includes(word) ||
-                product.producer_name.toLowerCase().includes(word) ||
+                product.product_type.toLowerCase().includes(word) ||
+                product.producer.toLowerCase().includes(word) ||
                 product.barcode.includes(word) ||
 
                 // Non-must-have fields
-                (product.volume_amount || "").toLowerCase().includes(word) ||
-                (product.strength_amount || "").toLowerCase().includes(word) ||
-                (product.puffs_amount_value || "").toLowerCase().includes(word) ||
-                (product.resistance_amount || "").toLowerCase().includes(word) ||
-                (product.pod_model_name || "").toLowerCase().includes(word)
+                (product.volume || "").toLowerCase().includes(word) ||
+                (product.strength || "").toLowerCase().includes(word) ||
+                (product.puffs_amount || "").toLowerCase().includes(word) ||
+                (product.resistance || "").toLowerCase().includes(word) ||
+                (product.pod_model || "").toLowerCase().includes(word)
             )
             
         );
@@ -89,8 +89,8 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
                             <li key={product.id} className="product-search__item">
                                 <h3 className="product-search__name">{product.name}</h3>
                                 <p className="product-search__detail">К-сть: {product.amount}</p>
-                                <p className="product-search__detail">Виробник: {product.producer_name}</p>
-                                <p className="product-search__detail">Тип товару: {product.product_type_name}</p>
+                                <p className="product-search__detail">Виробник: {product.producer}</p>
+                                <p className="product-search__detail">Тип товару: {product.product_type}</p>
                                 {showAddButton && (
                                   <button
                                       onClick={() => onProductAdd?.(product)}

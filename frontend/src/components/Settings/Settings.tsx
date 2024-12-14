@@ -11,7 +11,6 @@ const Settings: React.FC = () => {
 
     const hideSearch= settings.hideSearch
     const backgroundColor = settings.backgroundColor;
-    console.log(backgroundColor)
 
     const handleToggleSearchVisibility = (event: React.ChangeEvent<HTMLInputElement>) => {
         dispatch(setSearchVisibility(event.target.checked));

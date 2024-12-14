@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.generics import ListCreateAPIView, ListAPIView, CreateAPIView
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.db.models import Q
+from django.db.models import Q, F
 from collections import defaultdict
 
 from ..models import (
@@ -41,12 +41,19 @@ class CreateProductView(CreateAPIView):
         serializer.save()
 
     def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
-        product_name = response.data.get("name", "")
-        return Response(
-            data={"message": f"Продукт '{product_name}' успішно створено!"},
-            status=status.HTTP_201_CREATED,
-        )
+        try:
+            response = super().create(request, *args, **kwargs)
+            product_name = response.data.get("name", "")
+            return Response(
+                data={"message": f"Продукт '{product_name}' успішно створено!"},
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as ex:
+            print(ex)
+            return Response(
+                data={"message": f"Помилка при створенні продукту: {ex}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class ProductForeignKeysView(APIView):
@@ -124,7 +131,7 @@ class AddProductArrivalView(APIView):
                         new_amount=amount
                     )
                 
-                existing_product.amount += amount
+                existing_product.amount = F('amount') + amount
 
                 existing_product.save()
 

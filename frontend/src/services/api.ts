@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ProductTree, Product, BarcodeProduct, ArrivalProducts, OptProducts } from "../types/product";
+import { ProductTree, Product, ArrivalProducts, OptProducts } from "../types/product";
 import {
     ProductType,
     PodModel,
@@ -15,6 +15,9 @@ const api = axios.create({
     "Content-Type": "application/json",
     },
 });
+
+type Result<T, E> = { success: true; data: T } | { success: false; error: E };
+
 
 // add arrival
 export const addArrival = async (products: ArrivalProducts[]): Promise<{ success: boolean, data: string }> => {
@@ -39,15 +42,16 @@ export const addOpt = async (products: OptProducts[]): Promise<{ success: boolea
 };
 
 // check if there is a product by given barcode
-export const findProductByBarcode = async (barcode: string): Promise<{ success: boolean; data: BarcodeProduct | string }> => {
+export const findProductByBarcode = async (barcode: string): Promise<Result<Product, string>> => {
     try {
-        const response = await api.post<BarcodeProduct>("check-barcode/", { barcode });
-        return { success: true, data: response.data }; // Повертаємо об'єкт із продуктом
+        const response = await api.get<Product>(`check-barcode?barcode=${barcode}`);
+        return { success: true, data: response.data };
     } catch (error: any) {
         const message = error.response?.data?.message || "An error occurred.";
-        return { success: false, data: message }; // Повертаємо об'єкт із повідомленням
+        return { success: false, error: message };
     }
 };
+
 
 // subtract x items from y product (you sold them)
 export const addSale = async (product_id: number, amount: number): Promise<MessageResponse> => {

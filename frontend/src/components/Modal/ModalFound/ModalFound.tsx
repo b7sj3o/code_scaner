@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import "./ModalFound.scss";
-import { BarcodeProduct } from "../../../types/product";
+import { Product } from "../../../types/product";
 import { addSale } from "../../../services/api";
 import { useModalMessage } from "../../../context/ModalMessageContext";
 
 interface ModalProps {
-    product: BarcodeProduct;
+    product: Product;
     isOpen: boolean;
     onClose: () => void;
     showModal: (message: string) => void;

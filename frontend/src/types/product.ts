@@ -1,12 +1,12 @@
 export interface Product {
     id: number;
-    product_type_name: string;
-    producer_name: string;
-    volume_amount?: string;
-    strength_amount?: string;
-    puffs_amount_value?: string;
-    resistance_amount?: string;
-    pod_model_name?: string;
+    product_type: string;
+    producer: string;
+    volume?: string;
+    strength?: string;
+    puffs_amount?: string;
+    resistance?: string;
+    pod_model?: string;
     name: string;
     buy_price: number;
     sell_price: number;
@@ -15,13 +15,6 @@ export interface Product {
     barcode: string;
 }
 
-export interface BarcodeProduct {
-    id: number;
-    name: string;
-    amount: number;
-    producer: string;
-    barcode: string;
-}
 
 export interface ArrivalProducts {
     id: number;

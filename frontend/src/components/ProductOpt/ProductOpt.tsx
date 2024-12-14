@@ -95,7 +95,7 @@ const ProductOpt: React.FC = () => {
                     {selectedProducts.length > 0 && (
                         selectedProducts.map((product) => (
                             <div key={product.id} className="product-arrival__selected__item">
-                                <h3>{product.producer_name} - <span>{product.name}</span></h3>
+                                <h3>{product.producer} - <span>{product.name}</span></h3>
                                 <div className="product-arrival__selected__details">
                                     <button onClick={() => handleRemoveProduct(product.id)}>Видалити</button>
                                 </div>
@@ -146,7 +146,7 @@ const ProductOpt: React.FC = () => {
                     <tbody>
                         {arrivalProducts.map(({ product, amount, price }) => (
                             <tr key={product.id} className="product-arrival__item">
-                                <td>{product.producer_name} - {product.name}</td>
+                                <td>{product.producer} - {product.name}</td>
                                 <td>
                                     <input
                                         type="number"

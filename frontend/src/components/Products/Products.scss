@@ -70,3 +70,22 @@
     display: flex;
     column-gap: 15px;
 }
+
+.create-product-container {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.create-product-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.create-product-button:hover {
+    background-color: #45a049;
+}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { addSale, getProducers, getProductTree } from "../../services/api";
 import { useModalMessage } from "../../context/ModalMessageContext";
+import { useNavigate } from 'react-router-dom';
 import {
     CartridgeProduct,
     DisposableProduct,
@@ -18,6 +19,7 @@ const Products: React.FC = () => {
     const [path, setPath] = useState<string[]>([]);
     const [saleTriggered, setSaleTriggered] = useState(false);
     const { showModal } = useModalMessage(); 
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
@@ -75,19 +77,38 @@ const Products: React.FC = () => {
     };
 
     const renderProductList = (currentLevel: ProductInfo[]) => {
-        return currentLevel.map((product: ProductInfo) => (
-            <div key={product.id} className="product-item">
-                <h4>{product.name}</h4>
-                <p>Barcode: {product.barcode}</p>
-                <p>Amount: {product.amount}</p>
-                <p>Price: {product.sell_price}</p>
-                <br />
-                <button onClick={() => handleAddSale(product)}>
-                    Добавити продажу
-                </button>
-            </div>
-        ));
+        return (
+            <>
+                {currentLevel.map((product: ProductInfo) => (
+                    <div key={product.id} className="product-item">
+                        <h4>{product.name}</h4>
+                        <p>Barcode: {product.barcode}</p>
+                        <p>Amount: {product.amount}</p>
+                        <p>Price: {product.sell_price}</p>
+                        <br />
+                        <button onClick={() => handleAddSale(product)}>
+                            Добавити продажу
+                        </button>
+                    </div>
+                ))}
+                <div className="create-product-container">
+                    <button className="create-product-button" onClick={() => handleCreateProduct(currentLevel[0].barcode)}>
+                        Створити продукт
+                    </button>
+                </div>
+            </>
+        );
     };
+    
+
+    const handleCreateProduct = (productBarcode: string) => {
+        if (productBarcode) {
+            navigate(`/create-product?productBarcode=${productBarcode}`);
+        } else {
+            navigate("/create-product");
+        }
+    };
+
 
     const handleAddSale = async (product: ProductInfo) => {
         try {
