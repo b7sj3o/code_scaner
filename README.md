@@ -3,7 +3,6 @@
     <li>
         <strong>Clone the Repository</strong>
         <pre><code>git clone https://github.com/b7sj3o/code_scaner.git</code></pre>
-        <pre><code>cd frontend</code></pre>
     </li>
     <li>
         <strong>Create and Activate Virtual Environment</strong>
