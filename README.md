@@ -36,6 +36,20 @@
         </ul>
     </li>
     <li>
+        <strong>Run Database Migrations</strong>
+        <ul style="list-style-type: numerical;">
+            <li>Run database migrations to set up the database schema:</li>
+            <ul>
+                <li>If <code>make</code> is installed:
+                    <pre><code>make migrate</code></pre>
+                </li>
+                <li>If <code>make</code> is not installed, run the following command:
+                    <pre><code>python backend/manage.py migrate</code></pre>
+                </li>
+            </ul>
+        </ul>
+    </li>
+    <li>
         <strong>Prepare Backend</strong>
         <ul style="list-style-type: numerical;">
             <li>Open the first terminal.</li>
@@ -60,6 +74,12 @@
             <li>Navigate to the frontend directory:
                 <pre><code>cd frontend</code></pre>
             </li>
+            <li>Install <code>react-scripts</code> if not already installed:
+                <pre><code>npm install react-scripts --save</code></pre>
+            </li>
+            <li>Build the frontend app:
+                <pre><code>npm run build</code></pre>
+            </li>
             <li>Start the frontend server:
                 <pre><code>npm start</code></pre>
             </li>
@@ -69,7 +89,7 @@
         <strong>Version Requirements</strong>
         <ul>
             <li>Python version: <code>3.10.11</code></li>
-            <li>npm version: <code>10.9.0+</code></li>
+            <li>NPM version: <code>10.9.0+</code></li>
         </ul>
     </li>
 </ol>
