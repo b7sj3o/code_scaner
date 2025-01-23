@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import ProductSearch from "../ProductSearch/ProductSearch";
+import ProductSearch from "../../components/ProductSearch/ProductSearch";
 import { Product } from "../../types/product";
-import "./ProductArrival.scss";
+import "./ProductArrivalPage.scss";
 import { useModalMessage } from "../../context/ModalMessageContext";
 import { addArrival } from "../../services/api";
 
-const ProductArrival: React.FC = () => {
+const ProductArrivalPage: React.FC = () => {
     const [selectedProducts, setSelectedProducts] = useState<Product[]>([]);
     const [amount, setQuantity] = useState<number>(1);
     const [price, setPrice] = useState<number>(0);
@@ -94,7 +94,7 @@ const ProductArrival: React.FC = () => {
                     {selectedProducts.length > 0 && (
                         selectedProducts.map((product) => (
                             <div key={product.id} className="product-arrival__selected__item">
-                                <h3>{product.producer} - <span>{product.name}</span></h3>
+                                <h3>{product.producer_name} - <span>{product.name}</span></h3>
                                 <div className="product-arrival__selected__details">
                                     <button onClick={() => handleRemoveProduct(product.id)}>Видалити</button>
                                 </div>
@@ -145,7 +145,7 @@ const ProductArrival: React.FC = () => {
                     <tbody>
                         {arrivalProducts.map(({ product, amount, price }) => (
                             <tr key={product.id} className="product-arrival__item">
-                                <td>{product.producer} - {product.name}</td>
+                                <td>{product.producer_name} - {product.name}</td>
                                 <td>
                                     <input
                                         type="number"
@@ -193,4 +193,4 @@ const ProductArrival: React.FC = () => {
     
 };
 
-export default ProductArrival;
+export default ProductArrivalPage;

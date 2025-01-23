@@ -4,13 +4,13 @@ import { useSelector } from 'react-redux';
 
 import Layout from './components/Layout/Layout';
 
-import HomePage from './pages/HomePage';
-import CreateProductPage from './pages/CreateProductPage';
-import ScannerPage from './pages/ScannerPage';
-import ProductArrivalPage from './pages/ProductArrival';
-import ProductOptPage from './pages/ProductOptPage';
-import SettingsPage from './pages/SettingsPage';
-import AnalyticsPage from './pages/AnalyticsPage';
+import HomePage from './pages/HomePage/HomePage';
+import CreateProductPage from './pages/CreateProductPage/CreateProductPage';
+import ScannerPage from './pages/ScannerPage/ScannerPage';
+import ProductArrivalPage from './pages/ProductArrivalPage/ProductArrivalPage';
+import ProductOptPage from './pages/ProductOptPage/ProductOptPage';
+import SettingsPage from './pages/SettingsPage/SettingsPage';
+import AnalyticsPage from './pages/AnalyticsPage/AnalyticsPage';
 
 // App.tsx — Основний компонент програми. Це компонент верхнього рівня, з якого починається структура вашого додатку. 
 // Зазвичай він містить інші компоненти і є "вхідною точкою" програми.

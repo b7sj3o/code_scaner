@@ -10,7 +10,9 @@ from .views import (
     ProductTypeView,
     PodModelView,
     AddProductArrivalView,
-    AddProductOptView
+    AddProductOptView,
+    ProductSaleViewSet,
+    sales_summary
 )
 
 urlpatterns = [
@@ -26,4 +28,6 @@ urlpatterns = [
     path("pod-models/", PodModelView.as_view(), name="pod-models"),
     path("add-arrival/", AddProductArrivalView.as_view(), name="add-arrival"),
     path("add-opt/", AddProductOptView.as_view(), name="add-opt"),
+    path("sales_summary/", sales_summary, name="sales_summary"),
+    path("product_sales/", ProductSaleViewSet.as_view({'get': 'list'}), name="product_sales"),
 ]

@@ -7,5 +7,5 @@ from .product import (
     AddProductOptView
 )
 from .scanner import CheckForBarcodeView
-from .sale import AddSaleView
+from .sale import AddSaleView, ProductSaleViewSet, sales_summary
 from .models import ProducerView, ProductTypeView, PodModelView

@@ -126,8 +126,11 @@ class CreateProductSerializer(serializers.ModelSerializer):
         return super().to_internal_value(data)
 
     
+class ProductSaleSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    product_type = serializers.CharField(source='product.product_type.value', read_only=True)
+    producer_name = serializers.CharField(source='product.producer.value', read_only=True)
 
-class SaleSerializer(serializers.Serializer):
     class Meta:
-        model=ProductSale
-        fields=["product", "sell_price", "amount"]
+        model = ProductSale
+        fields = ['id', 'product_name', 'product_type', 'producer_name', 'sell_price', 'amount', 'date']

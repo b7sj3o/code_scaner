@@ -1,7 +1,15 @@
-from rest_framework import status
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Sum, Count
+from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view
+
+from ..filters import ProductSaleFilter
 from ..models import Product, ProductSale
+from ..serializers import ProductSaleSerializer
+
 
 class AddSaleView(APIView):
     def post(self, request):
@@ -70,3 +78,16 @@ class AddSaleView(APIView):
                 },
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
+
+class ProductSaleViewSet(viewsets.ModelViewSet):
+    queryset = ProductSale.objects.all()
+    serializer_class = ProductSaleSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = ProductSaleFilter
+
+
+# TODO: change it in future to OOP
+@api_view(['GET'])
+def sales_summary(request):
+    total_sales = ProductSale.objects.aggregate(total_revenue=Sum('sell_price'), total_amount=Sum('amount'))
+    return Response(total_sales)

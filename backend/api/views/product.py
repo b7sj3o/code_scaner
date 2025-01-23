@@ -78,40 +78,44 @@ class ProductTreeView(APIView):
         product_dict = defaultdict(lambda: defaultdict(lambda: defaultdict(list)))
 
         for product in products:
-            product_type = product.product_type.value
-            producer = product.producer.value
+            try:
+                product_type = product.product_type.value
+                producer = product.producer.value
 
-            product_info = {
-                "id": product.id,
-                "name": product.name,
-                "barcode": product.barcode,
-                "amount": product.amount,
-                "buy_price": product.buy_price,
-                "sell_price": product.sell_price,
-            }
+                product_info = {
+                    "id": product.id,
+                    "name": product.name,
+                    "barcode": product.barcode,
+                    "amount": product.amount,
+                    "buy_price": product.buy_price,
+                    "sell_price": product.sell_price,
+                }
 
-            if product_type in {"Готова жижа", "Самозаміс"}:
-                volume = product.volume.value
-                strength = product.strength.value
+                if product_type in {"Готова жижа", "Самозаміс"}:
+                    volume = product.volume.value
+                    strength = product.strength.value
 
-                if not product_dict[product_type][producer][volume]:
-                    product_dict[product_type][producer][volume] = defaultdict(list)
+                    if not product_dict[product_type][producer][volume]:
+                        product_dict[product_type][producer][volume] = defaultdict(list)
 
-                product_dict[product_type][producer][volume][strength].append(
-                    product_info
-                )
+                    product_dict[product_type][producer][volume][strength].append(
+                        product_info
+                    )
 
-            elif product_type == "Одноразка":
-                puffs_amount = product.puffs_amount.value
-                product_dict[product_type][producer][puffs_amount].append(product_info)
+                elif product_type == "Одноразка":
+                    puffs_amount = product.puffs_amount.value
+                    product_dict[product_type][producer][puffs_amount].append(product_info)
 
-            elif product_type == "Картридж":
-                resistance = product.resistance.value
-                product_dict[product_type][producer][resistance].append(product_info)
+                elif product_type == "Картридж":
+                    resistance = product.resistance.value
+                    product_dict[product_type][producer][resistance].append(product_info)
 
-            elif product_type == "Под":
-                pod_model = product.pod_model.value
-                product_dict[product_type][producer][pod_model].append(product_info)
+                elif product_type == "Под":
+                    pod_model = product.pod_model.value
+                    product_dict[product_type][producer][pod_model].append(product_info)
+                
+            except:
+                continue
 
         return Response(data=product_dict, status=status.HTTP_200_OK)
 

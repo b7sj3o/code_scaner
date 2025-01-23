@@ -1,20 +1,22 @@
+// src/pages/HomePage.tsx
 import React, { useState, useEffect } from "react";
-import { addSale, getProducers, getProductTree } from "../../services/api";
+import { addSale, getProductTree } from "../../services/api";
 import { useModalMessage } from "../../context/ModalMessageContext";
 import { useNavigate } from 'react-router-dom';
 import {
-    CartridgeProduct,
-    DisposableProduct,
-    PodProduct,
-    ProductInfo,
     ProductTree,
+    ProductInfo,
     ProductTypeGroup,
-    ReadyMixProduct,
     VolumeGroupedProducts,
+    DisposableProduct,
+    CartridgeProduct,
+    PodProduct,
+    ReadyMixProduct
 } from "../../types/product";
-import "./Products.scss";
+import ProductSearch from "../../components/ProductSearch/ProductSearch";  // додали імпорт ProductSearch
+import "./HomePage.scss"; // Тут ми можемо використовувати той самий SCSS для всієї сторінки
 
-const Products: React.FC = () => {
+const HomePage: React.FC = () => {
     const [productTree, setProductTree] = useState<ProductTree>({});
     const [path, setPath] = useState<string[]>([]);
     const [saleTriggered, setSaleTriggered] = useState(false);
@@ -137,25 +139,30 @@ const Products: React.FC = () => {
     const currentLevel = getCurrentLevel();
 
     return (
+        <div className="container">
+        <ProductSearch />
         <div className="products-container">
             <h2 className="title">Products</h2>
+            
             {path.length > 0 && (
                 <div className="product-btns">
                     <button className="back-button" onClick={handleGoBack}>
-                    Back
+                        Back
                     </button>
                     <button className="back-button" onClick={handleGoHome}>
-                    Home
+                        Home
                     </button>
                 </div>
             )}
+
             <button className="back-button" onClick={alertSome}>
-                    Click
+                Click
             </button>
 
             <div className="buttons-container">{renderCurrentLevel()}</div>
         </div>
+        </div>
     );
 };
 
-export default Products;
+export default HomePage;

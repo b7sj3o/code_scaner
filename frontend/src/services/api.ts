@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ProductTree, Product, ArrivalProducts, OptProducts } from "../types/product";
+import { ProductTree, Product, ArrivalProducts, OptProducts, ProductSale, SalesSummary } from "../types/product";
 import {
     ProductType,
     PodModel,
@@ -119,3 +119,24 @@ export const getPodModels = async (): Promise<PodModel[]> => {
     return response.data;
 };
 
+export const getFilteredSales = async (filters: any): Promise<ProductSale[]> => {
+    try {
+        const response = await api.get("product_sales/", {
+            params: filters,
+        });
+        return response.data;
+    } catch (error: any) {
+        console.error('Error: ', error);
+        return [];
+    }
+};
+
+export const getSalesSummary = async (): Promise<SalesSummary> => {
+    try {
+        const response = await api.get('sales_summary/');
+        return response.data;
+    } catch (error) {
+        console.error('Error: ', error);
+        return { total_revenue: 0, total_amount: 0 };
+    }
+};

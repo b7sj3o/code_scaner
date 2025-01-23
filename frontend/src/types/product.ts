@@ -1,7 +1,7 @@
 export interface Product {
     id: number;
-    product_type: string;
-    producer: string;
+    product_type_name: string;
+    producer_name: string;
     volume?: string;
     strength?: string;
     puffs_amount?: string;
@@ -64,4 +64,20 @@ export interface ProductTree {
 export interface ProductSearchProps {
     showAddButton?: boolean;
     onProductAdd?: (product: Product) => void;
+}
+
+// types/api.ts
+export interface ProductSale {
+    id: number;
+    product_name: string;
+    product_type: string;
+    producer_name: string;
+    sell_price: number;
+    amount: number;
+    date: string;
+}
+
+export interface SalesSummary {
+    total_revenue: number;
+    total_amount: number;
 }

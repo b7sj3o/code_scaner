@@ -1,0 +1,44 @@
+# doesn't work currently
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: elf_db
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: \\\
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - POSTGRES_DB=elf_db
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=\\\
+      - POSTGRES_HOST=db
+
+  frontend:
+    build: 
+      context: ./frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

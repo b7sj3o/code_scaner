@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import BarcodeScannerComponent from 'react-qr-barcode-scanner';
 import { findProductByBarcode } from '../../services/api';
 import { Product } from '../../types/product';
-import ModalFound from '../Modal/ModalFound/ModalFound';
-import ModalNotFound from '../Modal/ModalNotFound/ModalNotFound';
+import ModalFound from '../../components/Modal/ModalFound/ModalFound';
+import ModalNotFound from '../../components/Modal/ModalNotFound/ModalNotFound';
 import { useModalMessage } from '../../context/ModalMessageContext';
 import { useNavigate } from 'react-router-dom';
+import "./ScannerPage.scss";
 
-const Scanner: React.FC = () => {
+const ScannerPage: React.FC = () => {
     const [barcode, setBarcode] = useState<string>("");
     const [product, setProduct] = useState<Product | null>(null); 
     const [isModalFoundOpen, setIsModalFoundOpen] = useState<boolean>(false);
@@ -88,4 +89,4 @@ const Scanner: React.FC = () => {
     );
 };
 
-export default Scanner;
+export default ScannerPage;

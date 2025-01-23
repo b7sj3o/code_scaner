@@ -35,13 +35,13 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
         setInputQuery(query)
         const queries = query.toLowerCase().trim().split(/\s+/);
 
-        const filtered = products.filter((product) =>
-            queries.every((word) =>
+        const filtered = products.filter((product) => {
+            console.log(product)
+            return queries.every((word) =>
                 // Must-have fields
                 product.name.toLowerCase().includes(word) ||
-                product.product_type.toLowerCase().includes(word) ||
-                product.producer.toLowerCase().includes(word) ||
-                product.barcode.includes(word) ||
+                product.product_type_name.toLowerCase().includes(word) ||
+                product.producer_name.toLowerCase().includes(word) ||
 
                 // Non-must-have fields
                 (product.volume || "").toLowerCase().includes(word) ||
@@ -50,6 +50,8 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
                 (product.resistance || "").toLowerCase().includes(word) ||
                 (product.pod_model || "").toLowerCase().includes(word)
             )
+        }
+            
             
         );
         setFilteredProducts(filtered);
@@ -89,8 +91,8 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
                             <li key={product.id} className="product-search__item">
                                 <h3 className="product-search__name">{product.name}</h3>
                                 <p className="product-search__detail">К-сть: {product.amount}</p>
-                                <p className="product-search__detail">Виробник: {product.producer}</p>
-                                <p className="product-search__detail">Тип товару: {product.product_type}</p>
+                                <p className="product-search__detail">Виробник: {product.producer_name}</p>
+                                <p className="product-search__detail">Тип товару: {product.product_type_name}</p>
                                 {showAddButton && (
                                   <button
                                       onClick={() => onProductAdd?.(product)}

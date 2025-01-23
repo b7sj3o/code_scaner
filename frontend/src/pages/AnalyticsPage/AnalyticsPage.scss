@@ -1,0 +1,94 @@
+// src/components/SalesAnalytics/SalesAnalytics.scss
+
+.sales-analytics-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    color: #333;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 30px;
+
+    input {
+        padding: 10px;
+        font-size: 1rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        outline: none;
+        width: 200px;
+    }
+
+    input[type="date"] {
+        width: 200px;
+    }
+
+    input[type="text"] {
+        width: 300px;
+    }
+}
+
+.filters input:focus {
+    border-color: #007bff;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    font-size: 1.25rem;
+
+    h3 {
+        margin: 0;
+        color: #007bff;
+    }
+}
+
+.sales-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.sale-item {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+
+    &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    h4 {
+        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    p {
+        font-size: 1rem;
+        color: #555;
+        margin-bottom: 8px;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
+    }
+
+    .date {
+        color: #777;
+        font-size: 0.875rem;
+    }
+}

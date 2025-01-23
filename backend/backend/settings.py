@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     "sslserver",
     "rest_framework",
     "corsheaders",
+    "django_filters",
     "api",
 ]
 
@@ -46,16 +47,14 @@ CORS_ALLOWED_ORIGINS = [
 hostname = socket.gethostname()
 network_ip = next(
     filter(
-        lambda x: "192.168." in x,
+        lambda x: "192.168.0." in x,
         socket.gethostbyname_ex(hostname)[2] # [2] is list of IPs
     )
 )
 
-
 if network_ip:
     CORS_ALLOWED_ORIGINS += f"http://{network_ip}:3000",
     CORS_ALLOWED_ORIGINS += f"https://{network_ip}:3000",
-
 
 ROOT_URLCONF = "backend.urls"
 

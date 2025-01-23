@@ -23,7 +23,7 @@ class Product(models.Model):
     
     buy_price = models.FloatField(validators=[MinValueValidator(0.0)])
     sell_price = models.FloatField(validators=[MinValueValidator(0.0)])
-    drop_sell_price = models.PositiveIntegerField()
+    drop_sell_price = models.PositiveIntegerField(validators=[MinValueValidator(0.0)])
 
     amount = models.PositiveIntegerField()
     
@@ -40,7 +40,6 @@ class Product(models.Model):
     
     def __str__(self):
         return f"{self.id} - {self.name} ({self.product_type})"
-    
 
 # TODO: idk what to do, i dont want to keep each sale
 # maybe would change it to DailyProductSale, so 1 table row = 1 real day, O(n) :)))

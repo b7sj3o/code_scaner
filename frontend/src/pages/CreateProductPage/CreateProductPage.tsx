@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import "./ProductForm.scss";
+import "./CreateProductPage.scss";
 import { createProduct, findProductByBarcode, getProductForeignKeys } from "../../services/api";
 import { ProductForm, ProductForeignKeys, Producer } from '../../types/product-form';
 import { useModalMessage } from "../../context/ModalMessageContext";
 import { useLocation } from 'react-router-dom';
 
-const CreateProduct: React.FC = () => {
+const CreateProductPage: React.FC = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const barcodeFromScanner = searchParams.get("scannerBarcode");
@@ -47,8 +47,8 @@ const CreateProduct: React.FC = () => {
 
                         setFormData((prevData) => ({
                             ...prevData,
-                            product_type: product.product_type || "",
-                            producer: product.producer || "",
+                            product_type: product.product_type_name || "",
+                            producer: product.producer_name || "",
                             volume: product.volume || "",
                             strength: product.strength || "",
                             puffs_amount: product.puffs_amount || "",
@@ -247,4 +247,4 @@ const CreateProduct: React.FC = () => {
     );
 }
 
-export default CreateProduct;
+export default CreateProductPage;

@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.contrib import admin
 from .models import (
     Product,
@@ -13,7 +14,7 @@ from .models import (
 
 
 models_db = [
-    Product,
+    # Product,
     ProductType,
     Producer,
     PuffsAmount,
@@ -26,3 +27,25 @@ models_db = [
 
 for model in models_db:
     admin.site.register(model)
+
+
+@admin.register(Product)
+class ProductAdmin(admin.ModelAdmin):
+    # Поля для відображення в таблиці
+    list_display = (
+        "id",
+        "product_type",
+        "producer",
+        "name",
+        "buy_price",
+        "sell_price",
+        "drop_sell_price",
+        "amount",
+    )
+    
+    # Поля для пошуку
+    search_fields = ("name", "barcode")
+
+    # Фільтри
+    list_filter = ("product_type", "producer")
+    

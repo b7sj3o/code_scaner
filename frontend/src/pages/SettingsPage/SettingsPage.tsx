@@ -1,11 +1,10 @@
 // src/components/SettingsPage.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearchVisibility, setBackgroundColor } from '../../redux/settingsSlice';
-import { RootState } from '../../redux/store';
-import "./Settings.scss"
+import "./SettingsPage.scss"
 
-const Settings: React.FC = () => {
+const SettingsPage: React.FC = () => {
     const dispatch = useDispatch();
     const settings = useSelector((state: any) => state.settings);
 
@@ -44,4 +43,4 @@ const Settings: React.FC = () => {
     );
 };
 
-export default Settings;
+export default SettingsPage;
