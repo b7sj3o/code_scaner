@@ -1,7 +1,6 @@
 .products-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
     margin-top: 20px;
     font-family: Arial, sans-serif;
 
@@ -31,6 +30,7 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
+        margin: 0 auto;
         gap: 15px;
         width: 100%;
         max-width: 600px;
@@ -68,6 +68,7 @@
 
 .product-btns {
     display: flex;
+    justify-content: center;
     column-gap: 15px;
 }
 
@@ -88,4 +89,35 @@
 
 .create-product-button:hover {
     background-color: #45a049;
+}
+
+.path-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    font-family: Arial, sans-serif;
+
+    .path {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+
+        h4 {
+            margin: 0;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all .2s;
+
+            &:hover {
+                color: #576fda;
+            }
+            
+            &:not(:last-child)::after {
+                content: ">";
+                color: #000;
+                text-decoration: none;
+                margin-left: 5px;
+            }
+        }
+    }
 }

@@ -150,12 +150,14 @@ const ProductOptPage: React.FC = () => {
                                 <td>
                                     <input
                                         type="number"
-                                        min="1"
                                         value={amount}
                                         onChange={(e) => {
+                                            if (e.target.value[0] === "0") {
+                                                e.target.value = e.target.value.slice(1)
+                                            }
                                             const updatedArrival = arrivalProducts.map((arrProduct) => 
                                                 arrProduct.product.id === product.id
-                                                    ? { ...arrProduct, quantity: +e.target.value }
+                                                    ? { ...arrProduct, amount: +e.target.value }
                                                     : arrProduct
                                             );
                                             setArrivalProducts(updatedArrival);
@@ -165,10 +167,11 @@ const ProductOptPage: React.FC = () => {
                                 <td>
                                     <input
                                         type="number"
-                                        min="0"
-                                        step="1"
                                         value={price}
                                         onChange={(e) => {
+                                            if (e.target.value[0] === "0") {
+                                                e.target.value = e.target.value.slice(1)
+                                            }
                                             const updatedArrival = arrivalProducts.map((arrProduct) => 
                                                 arrProduct.product.id === product.id
                                                     ? { ...arrProduct, price: +e.target.value }

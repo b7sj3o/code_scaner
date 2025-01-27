@@ -89,5 +89,5 @@ class ProductSaleViewSet(viewsets.ModelViewSet):
 # TODO: change it in future to OOP
 @api_view(['GET'])
 def sales_summary(request):
-    total_sales = ProductSale.objects.aggregate(total_revenue=Sum('sell_price'), total_amount=Sum('amount'))
+    total_sales = ProductSale.objects.aggregate(total_revenue=Sum('sell_price'), total_amount=Sum('amount'), total_earning=Sum('sell_price')-Sum("product__buy_price"))
     return Response(total_sales)

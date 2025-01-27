@@ -1,4 +1,3 @@
-// src/components/Layout.tsx
 import React, { useState, useEffect } from 'react';
 import { getFilteredSales, getSalesSummary } from '../../services/api';
 import { ProductSale, SalesSummary } from '../../types/product';
@@ -6,7 +5,7 @@ import "./AnalyticsPage.scss";
 
 const AnalyticsPage: React.FC = () => {
     const [sales, setSales] = useState<ProductSale[]>([]);
-    const [salesSummary, setSalesSummary] = useState<SalesSummary>({ total_revenue: 0, total_amount: 0 });
+    const [salesSummary, setSalesSummary] = useState<SalesSummary>({ total_revenue: 0, total_amount: 0, total_earning: 0 });
     const [filters, setFilters] = useState<any>({
         start_date: '',
         end_date: '',
@@ -14,6 +13,7 @@ const AnalyticsPage: React.FC = () => {
         product_type: '',
         producer: '',
     });
+    const [showAllSales, setShowAllSales] = useState(false);
 
     useEffect(() => {
         // Завантажуємо фільтровані продажі
@@ -39,9 +39,13 @@ const AnalyticsPage: React.FC = () => {
         });
     };
 
+    const handleToggleShowAll = () => {
+        setShowAllSales(!showAllSales);
+    };
+
     return (
         <div className="sales-analytics-container">
-            <h2>Sales Analytics</h2>
+            <h2>Аналітика Продажів</h2>
             
             <div className="filters">
                 <input
@@ -49,55 +53,63 @@ const AnalyticsPage: React.FC = () => {
                     name="start_date"
                     value={filters.start_date}
                     onChange={handleFilterChange}
-                    placeholder="Start Date"
+                    placeholder="Дата початку"
                 />
                 <input
                     type="date"
                     name="end_date"
                     value={filters.end_date}
                     onChange={handleFilterChange}
-                    placeholder="End Date"
+                    placeholder="Дата закінчення"
                 />
                 <input
                     type="text"
                     name="product"
                     value={filters.product}
                     onChange={handleFilterChange}
-                    placeholder="Product"
+                    placeholder="Продукт"
                 />
                 <input
                     type="text"
                     name="product_type"
                     value={filters.product_type}
                     onChange={handleFilterChange}
-                    placeholder="Product Type"
+                    placeholder="Тип продукту"
                 />
                 <input
                     type="text"
                     name="producer"
                     value={filters.producer}
                     onChange={handleFilterChange}
-                    placeholder="Producer"
+                    placeholder="Виробник"
                 />
             </div>
 
             <div className="summary">
-                <h3>Total Revenue: {salesSummary.total_revenue} грн</h3>
-                <h3>Total Sales Amount: {salesSummary.total_amount} шт</h3>
+                <div>
+                    <h3>Загальний дохід: {salesSummary.total_revenue} грн</h3>
+                    <h3>Загальний заробіток: {salesSummary.total_earning} грн</h3>
+                </div>
+                <h3>Загальна кількість продажів: {salesSummary.total_amount} шт</h3>
             </div>
 
             <div className="sales-list">
-                {sales.map((sale) => (
+                {(showAllSales ? sales : sales.slice(0, 10)).map((sale) => (
                     <div key={sale.id} className="sale-item">
                         <h4>{sale.product_name}</h4>
-                        <p>Product Type: {sale.product_type}</p>
-                        <p>Producer: {sale.producer_name}</p>
-                        <p>Amount Sold: {sale.amount}</p>
-                        <p>Sell Price: {sale.sell_price} грн</p>
-                        <p>Date: {new Date(sale.date).toLocaleDateString()}</p>
+                        <p>Тип продукту: {sale.product_type}</p>
+                        <p>Виробник: {sale.producer_name}</p>
+                        <p>Кількість проданого: {sale.amount}</p>
+                        <p>Ціна продажу: {sale.sell_price} грн</p>
+                        <p>Дата: {new Date(sale.date).toLocaleDateString()}</p>
                     </div>
                 ))}
             </div>
+            {sales.length > 10 && (
+                <button onClick={handleToggleShowAll} className='show-all-button'>
+                    {showAllSales ? 'Показати менше' : 'Показати всі'}
+                </button>
+            )}
         </div>
     );
 };

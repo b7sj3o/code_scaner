@@ -2,9 +2,7 @@
 import React, { useState, useEffect } from "react";
 import "./ProductSearch.scss";
 import { Product, ProductSearchProps } from "../../types/product";
-import { useDispatch, useSelector } from "react-redux";
-import { setSearchVisibility } from "../../redux/settingsSlice";
-import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 import { getProducts } from "../../services/api";
 
 
@@ -16,7 +14,7 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
     
     const settings = useSelector((state: any) => state.settings);
     
-    const [hideSearch, setHideSearch] = useState(settings.hideSearch)
+    const [isSearchVisible, setSearchVisibility] = useState(settings.isSearchVisible)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,11 +30,16 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
     }, []);
 
     const handleInputChange = (query: string) => {
+        if (query.length > 0 && !isSearchVisible) {
+            setSearchVisibility(true);
+        } else if (query.length === 0 && isSearchVisible) {
+            setSearchVisibility(false);
+        }
+
         setInputQuery(query)
         const queries = query.toLowerCase().trim().split(/\s+/);
 
         const filtered = products.filter((product) => {
-            console.log(product)
             return queries.every((word) =>
                 // Must-have fields
                 product.name.toLowerCase().includes(word) ||
@@ -57,8 +60,8 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
         setFilteredProducts(filtered);
     };
 
-    const handleHideSearch = () => {
-        setHideSearch(!hideSearch);
+    const handleShowSearch = () => {
+        setSearchVisibility(!isSearchVisible);
     }
 
     return (
@@ -70,17 +73,17 @@ const ProductSearch: React.FC<ProductSearchProps> = ({ showAddButton = false, on
                     placeholder="Пошук продуктів"
                     className="product-search__input"
                 />
-                <button className="product-search__button" type="submit" onClick={handleHideSearch}>
-                    {hideSearch ? (
-                        <img src="/images/eye.png" alt="Показати форму" />
+                <button className="product-search__button" type="submit" onClick={handleShowSearch}>
+                    {isSearchVisible ? (
+                        <img src="/images/eye.png" alt="Сховати форму" title="Сховати форму" />
                     ) : (
-                        <img src="/images/no-eye.png" alt="Сховати форму" />
+                        <img src="/images/no-eye.png" alt="Показати форму" title="Показати форму" />
                     )}
                 </button>
             </div>
 
             <ul className="product-search__results">
-                {hideSearch ? (
+                {isSearchVisible ? (
                     // Якщо форма схована, нічого не показувати
                     inputQuery.length >= 1 && filteredProducts.length === 0 ? (
                         // Якщо введений запит, але немає результатів

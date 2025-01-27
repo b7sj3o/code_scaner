@@ -43,8 +43,6 @@ const CreateProductPage: React.FC = () => {
                     if (result.success) {
                         const product = result.data;
 
-                        console.log(product)
-
                         setFormData((prevData) => ({
                             ...prevData,
                             product_type: product.product_type_name || "",
@@ -104,7 +102,6 @@ const CreateProductPage: React.FC = () => {
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        console.log(e.target.value)
         setFormData((prevData) => ({
             ...prevData,
             [e.target.name]: e.target.value

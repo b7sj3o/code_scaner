@@ -1,6 +1,16 @@
 import os
 import socket
 from pathlib import Path
+from dotenv import load_dotenv
+
+load_dotenv()
+
+DEBUG = os.getenv("DEBUG", "False") == "True"
+DB_NAME = os.getenv("DB_NAME", "db.sqlite3")
+DB_USER = os.getenv("DB_USER", "")
+DB_PASSWORD = os.getenv("DB_PASSWORD", "")
+DB_HOST = os.getenv("DB_HOST", "")
+DB_PORT = os.getenv("DB_PORT", "")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,21 +50,24 @@ MIDDLEWARE = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://localhost:3000",
-    "https://c783-178-212-97-156.ngrok-free.app"
+    "http://127.0.0.1:3000",
+    "https://127.0.0.1:3000",
 ]
 
 # Get network IP
 hostname = socket.gethostname()
-network_ip = next(
+ip_list = socket.gethostbyname_ex(hostname)[2]  # [2] is list of IPs
+network_ips = list(
     filter(
         lambda x: "192.168.0." in x,
-        socket.gethostbyname_ex(hostname)[2] # [2] is list of IPs
+        ip_list
     )
 )
 
-if network_ip:
-    CORS_ALLOWED_ORIGINS += f"http://{network_ip}:3000",
-    CORS_ALLOWED_ORIGINS += f"https://{network_ip}:3000",
+if network_ips:
+    for network_ip in network_ips:
+        CORS_ALLOWED_ORIGINS += [f"http://{network_ip}:3000"]
+        CORS_ALLOWED_ORIGINS += [f"https://{network_ip}:3000"]
 
 ROOT_URLCONF = "backend.urls"
 
@@ -85,12 +98,25 @@ WSGI_APPLICATION = "backend.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# if DEBUG:
+#     DATABASES = {
+#         "default": {
+#             "ENGINE": "django.db.backends.sqlite3",
+#             "NAME": BASE_DIR / "db.sqlite3",
+#         }
+#     }
+# else:
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": DB_NAME,
+        "USER": DB_USER,
+        "PASSWORD": DB_PASSWORD,
+        "HOST": DB_HOST,
+        "PORT": DB_PORT,
     }
 }
+
 
 
 # Password validation

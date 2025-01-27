@@ -13,8 +13,8 @@ import {
     PodProduct,
     ReadyMixProduct
 } from "../../types/product";
-import ProductSearch from "../../components/ProductSearch/ProductSearch";  // додали імпорт ProductSearch
-import "./HomePage.scss"; // Тут ми можемо використовувати той самий SCSS для всієї сторінки
+import ProductSearch from "../../components/ProductSearch/ProductSearch";
+import "./HomePage.scss";
 
 const HomePage: React.FC = () => {
     const [productTree, setProductTree] = useState<ProductTree>({});
@@ -132,9 +132,10 @@ const HomePage: React.FC = () => {
         }
     };
 
-    const alertSome = async () => {
-        showModal("HELLO!")
-    }
+    const moveToLevel = (key: string) => {
+        const index = path.indexOf(key);
+        setPath(path.slice(0, index + 1));
+    };
 
     const currentLevel = getCurrentLevel();
 
@@ -145,6 +146,16 @@ const HomePage: React.FC = () => {
             <h2 className="title">Products</h2>
             
             {path.length > 0 && (
+                <>
+                <div className="path-container">
+                    <div className="path">
+                        {/* "home" doesn't exist so indexOf will return -1 end it will clear path fully :)) */}
+                        <h4 onClick={() => moveToLevel("home")}>Home</h4>
+                        {path.map((key) => (
+                            <h4 key={key} onClick={() => moveToLevel(key)}>{key}</h4>
+                        ))}
+                    </div>
+                </div>
                 <div className="product-btns">
                     <button className="back-button" onClick={handleGoBack}>
                         Back
@@ -153,11 +164,8 @@ const HomePage: React.FC = () => {
                         Home
                     </button>
                 </div>
+                </>
             )}
-
-            <button className="back-button" onClick={alertSome}>
-                Click
-            </button>
 
             <div className="buttons-container">{renderCurrentLevel()}</div>
         </div>

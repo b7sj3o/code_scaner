@@ -8,7 +8,7 @@ const SettingsPage: React.FC = () => {
     const dispatch = useDispatch();
     const settings = useSelector((state: any) => state.settings);
 
-    const hideSearch= settings.hideSearch
+    const isSearchVisible= settings.isSearchVisible
     const backgroundColor = settings.backgroundColor;
 
     const handleToggleSearchVisibility = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +26,7 @@ const SettingsPage: React.FC = () => {
                 <label>Показувати пошук:</label>
                 <input
                     type="checkbox"
-                    checked={hideSearch}
+                    checked={isSearchVisible}
                     onChange={handleToggleSearchVisibility}
                 />
             </div>

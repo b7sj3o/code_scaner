@@ -37,6 +37,7 @@ class CreateProductView(CreateAPIView):
     queryset = Product.objects.all()
     serializer_class = CreateProductSerializer
 
+    # TODO: maybe it's not needed
     def perform_create(self, serializer):
         serializer.save()
 

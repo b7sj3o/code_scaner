@@ -137,6 +137,6 @@ export const getSalesSummary = async (): Promise<SalesSummary> => {
         return response.data;
     } catch (error) {
         console.error('Error: ', error);
-        return { total_revenue: 0, total_amount: 0 };
+        return { total_revenue: 0, total_amount: 0, total_earning: 0 };
     }
 };

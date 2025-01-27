@@ -84,9 +84,6 @@ class GetProductSerializer(serializers.ModelSerializer):
         ]
 
 
-from rest_framework import serializers
-from .models import Product, ProductType, Producer, LiquidVolume, LiquidStrength, PuffsAmount, CartridgeResistance, PodModel
-
 class CreateProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product

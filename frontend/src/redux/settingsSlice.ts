@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface SettingsState {
-    hideSearch: boolean;
+    isSearchVisible: boolean;
     backgroundColor: string;
 }
 
 const initialState: SettingsState = {
-    hideSearch: JSON.parse(localStorage.getItem('hideSearch') || 'false'),
+    isSearchVisible: JSON.parse(localStorage.getItem('isSearchVisible') || 'false'),
     backgroundColor: JSON.parse(localStorage.getItem('backgroundColor') || 'false'),
 };
 
@@ -15,8 +15,8 @@ const settingsSlice = createSlice({
     initialState,
     reducers: {
         setSearchVisibility(state, action: PayloadAction<boolean>) {
-            state.hideSearch = action.payload;
-            localStorage.setItem('hideSearch', JSON.stringify(state.hideSearch));
+            state.isSearchVisible = action.payload;
+            localStorage.setItem('isSearchVisible', JSON.stringify(state.isSearchVisible));
         },
         setBackgroundColor: (state, action) => {
             state.backgroundColor = action.payload;

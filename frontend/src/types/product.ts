@@ -80,4 +80,5 @@ export interface ProductSale {
 export interface SalesSummary {
     total_revenue: number;
     total_amount: number;
+    total_earning: number;
 }
